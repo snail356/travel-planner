@@ -70,7 +70,16 @@ export const hongkongTrip: Trip = {
     },
   ],
   stops: [
-    { id: 1,  name: '一點心',           type: 'food', day: 1, price: 880,  area: '太子',   lat: 22.3247, lng: 114.1686, desc: '米其林推薦平價點心。' },
+    {
+      id: 1, name: '一點心', type: 'food', day: 1, price: 880, area: '太子', lat: 22.3247, lng: 114.1686,
+      desc: '米其林推薦平價點心。',
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/One_Dim_Sum%2C_Michelin-Star_Fast_Food_Dim_Sum_in_Hong_Kong_SML.20120818.IP3_%287809374102%29.jpg/960px-One_Dim_Sum%2C_Michelin-Star_Fast_Food_Dim_Sum_in_Hong_Kong_SML.20120818.IP3_%287809374102%29.jpg',
+      imageCredit: {
+        author: 'See-ming Lee',
+        license: 'CC BY-SA 2.0',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:One_Dim_Sum,_Michelin-Star_Fast_Food_Dim_Sum_in_Hong_Kong_SML.20120818.IP3_(7809374102).jpg',
+      },
+    },
     { id: 2,  name: '蘭苑饎館',         type: 'food', day: 1, price: 177,  area: '待確認', lat: 22.2840, lng: 114.1545, desc: '說明待補。' },
     { id: 3,  name: 'HashtagB',         type: 'food', day: 1, price: 72,   area: '銅鑼灣', lat: 22.2803, lng: 114.1845, desc: '網紅甜品／飲品。' },
     { id: 4,  name: '霸王茶姬',         type: 'food', day: 1, price: 128,  area: '待確認', lat: 22.2812, lng: 114.1820, desc: '人氣茶飲。' },

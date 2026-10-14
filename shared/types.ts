@@ -19,6 +19,15 @@ export interface Stop {
   hours?: string
   tips?: string
   imageUrl?: string
+  /** 使用他人授權照片時的標示（例如 CC BY-SA 需註明作者與授權） */
+  imageCredit?: ImageCredit
+}
+
+export interface ImageCredit {
+  author: string
+  license: string
+  /** 照片來源頁面 */
+  sourceUrl: string
 }
 
 /** 行程中的固定地點（非景點／餐廳），例如住宿、機場 */

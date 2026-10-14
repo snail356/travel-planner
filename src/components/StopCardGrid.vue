@@ -4,6 +4,7 @@ import { faCheck, faPlus } from '@fortawesome/free-solid-svg-icons'
 import type { Stop } from '../../shared/types'
 import { useTrip } from '../composables/useTrip'
 import { useCurrentCheckins } from '../composables/useCheckins'
+import StopPhoto from './StopPhoto.vue'
 
 defineProps<{ id: string; eyebrow: string; title: string; sub: string; stops: Stop[] }>()
 const { selectStop } = useTrip()
@@ -18,8 +19,7 @@ const { isChecked } = useCurrentCheckins()
       <p class="sub">{{ sub }}</p>
       <div class="grid">
         <div v-for="s in stops" :key="s.id" class="card" @click="selectStop(s)">
-          <img v-if="s.imageUrl" class="img" :src="s.imageUrl" :alt="s.name" />
-          <div v-else class="img placeholder">照片</div>
+          <StopPhoto :stop="s" />
           <div class="body">
             <div class="t">{{ s.name }}</div>
             <div class="chips">

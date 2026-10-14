@@ -4,6 +4,7 @@ import { faCircleCheck, faLocationDot, faStamp, faXmark } from '@fortawesome/fre
 import { dayStyle, placeLabels, useTrip } from '../composables/useTrip'
 import { useCurrentCheckins } from '../composables/useCheckins'
 import { placeIcons } from '../icons'
+import StopPhoto from './StopPhoto.vue'
 
 const { selectedStop: s, selectedPlace: p, closeDetail } = useTrip()
 const { isChecked, toggle } = useCurrentCheckins()
@@ -18,8 +19,7 @@ const mapsUrl = (name: string) =>
     <span class="sheet-handle" aria-hidden="true"></span>
     <button class="close" aria-label="關閉" @click="closeDetail"><FontAwesomeIcon :icon="faXmark" /></button>
     <template v-if="s">
-      <img v-if="s.imageUrl" class="img" :src="s.imageUrl" :alt="s.name" />
-      <div v-else class="img placeholder">照片</div>
+      <StopPhoto :stop="s" />
       <div class="body">
         <p>
           <span class="tag" :style="dayStyle(s.day)">Day {{ s.day }}</span>
