@@ -15,7 +15,7 @@ export interface NavItem {
   icon: IconDefinition
 }
 
-// 首頁快捷列與手機底部 tab bar 共用
+// 頂部導覽列與手機底部 tab bar 共用
 export const navItems: Record<'route' | 'food' | 'spots' | 'stay' | 'transport' | 'cost', NavItem> = {
   route: { href: '#itinerary', label: '行程', en: 'ROUTE', icon: faRoute },
   food: { href: '#food', label: '美食', en: 'FOOD', icon: faUtensils },

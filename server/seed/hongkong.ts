@@ -49,6 +49,26 @@ export const hongkongTrip: Trip = {
     { label: '機票：香港快運來回', amount: 4768, unit: '人' },
     { label: '住宿：OTTO HOTEL 兩晚', amount: 9812 },
   ],
+  places: [
+    {
+      id: 'hotel-otto',
+      kind: 'hotel',
+      name: 'OTTO HOTEL',
+      area: '尖沙咀（待確認）',
+      lat: 22.2995,
+      lng: 114.1733,
+      desc: '住宿兩晚，NT$9,812。位置待確認。',
+    },
+    {
+      id: 'airport-hkg',
+      kind: 'airport',
+      name: '香港國際機場',
+      area: '赤鱲角',
+      lat: 22.308,
+      lng: 113.9185,
+      desc: '搭香港快運往返。可用 FunPASS 的機場快線往返票進市區。',
+    },
+  ],
   stops: [
     { id: 1,  name: '一點心',           type: 'food', day: 1, price: 880,  area: '太子',   lat: 22.3247, lng: 114.1686, desc: '米其林推薦平價點心。' },
     { id: 2,  name: '蘭苑饎館',         type: 'food', day: 1, price: 177,  area: '待確認', lat: 22.2840, lng: 114.1545, desc: '說明待補。' },

@@ -1,15 +1,17 @@
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import {
+  faBed,
   faBus,
   faFerry,
   faPersonWalking,
   faPlane,
+  faPlaneDeparture,
   faTaxi,
   faTicket,
   faTrainSubway,
   faTrainTram,
 } from '@fortawesome/free-solid-svg-icons'
-import type { TransportIcon } from '../shared/types'
+import type { PlaceKind, TransportIcon } from '../shared/types'
 
 export const transportIcons: Record<TransportIcon, IconDefinition> = {
   plane: faPlane,
@@ -20,4 +22,9 @@ export const transportIcons: Record<TransportIcon, IconDefinition> = {
   ferry: faFerry,
   taxi: faTaxi,
   walk: faPersonWalking,
+}
+
+export const placeIcons: Record<PlaceKind, IconDefinition> = {
+  hotel: faBed,
+  airport: faPlaneDeparture,
 }

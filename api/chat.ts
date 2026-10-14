@@ -38,6 +38,7 @@ export function buildSystemPrompt(trip: Trip, focusStopId?: number): string {
   return [
     `你是「${trip.title}」的旅遊助理，用繁體中文回答，根據下列行程資料回覆。`,
     `住宿：${trip.hotel.name}（${trip.hotel.nights} 晚）`,
+    `固定地點：\n${trip.places.map(p => `- ${p.name}（${p.area}）${p.desc}`).join('\n')}`,
     `站點：\n${stops}`,
     focus ? `使用者目前正在看：${focus.name}` : '',
   ].filter(Boolean).join('\n\n')

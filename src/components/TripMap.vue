@@ -4,7 +4,8 @@ import L from 'leaflet'
 import { icon as faIcon } from '@fortawesome/fontawesome-svg-core'
 import { faCheck, faExpand } from '@fortawesome/free-solid-svg-icons'
 import type { DayNo } from '../../shared/types'
-import { dayColors, useTrip } from '../composables/useTrip'
+import { dayColors, placeLabels, useTrip } from '../composables/useTrip'
+import { placeIcons } from '../icons'
 import { useCurrentCheckins } from '../composables/useCheckins'
 
 type MapStyle = 'simple' | 'detailed'
@@ -25,7 +26,7 @@ const TILES: Record<MapStyle, { url: string; attribution?: string }[]> = {
 // Leaflet 釘選是純 HTML 字串，直接用 Font Awesome 產生的 SVG
 const CHECK_SVG = faIcon(faCheck).html.join('')
 
-const { visibleStops, selectedStop, selectStop } = useTrip()
+const { trip, visibleStops, selectedStop, selectedPlace, activeFilter, selectStop, selectPlace } = useTrip()
 const { checked, isChecked } = useCurrentCheckins()
 const el = ref<HTMLDivElement>()
 const mapStyle = ref<MapStyle>('simple')
@@ -35,6 +36,7 @@ let map: L.Map | undefined
 const tileGroup = L.layerGroup()
 const markerLayer = L.layerGroup()
 const routeLayer = L.layerGroup()
+const placeLayer = L.layerGroup()
 
 function applyTiles() {
   tileGroup.clearLayers()
@@ -84,14 +86,51 @@ function renderRoutes() {
   }
 }
 
-function fitToStops() {
-  if (!map || !visibleStops.value.length) return
+// 住宿、機場等固定地點：每個分頁都顯示，用深色方形圖示和景點區分
+function renderPlaces() {
+  if (!map) return
+  placeLayer.clearLayers()
+  for (const p of trip.value?.places ?? []) {
+    const icon = L.divIcon({
+      className: '',
+      iconSize: [34, 34],
+      iconAnchor: [17, 17],
+      html: `<div class="place-pin">${faIcon(placeIcons[p.kind]).html.join('')}</div>`,
+    })
+    L.marker([p.lat, p.lng], { icon, zIndexOffset: 500 })
+      .bindTooltip(`${placeLabels[p.kind]}・${p.name}`)
+      .on('click', () => selectPlace(p))
+      .addTo(placeLayer)
+  }
+}
+
+// 要縮放涵蓋的點：地點分頁 → 該類地點；其他 → 景點 + 住宿
+// （機場在大嶼山，納入會讓市區景點縮得太小，所以總覽不含機場）
+function fitPoints(): L.LatLng[] {
+  const f = activeFilter.value
+  const places = trip.value?.places ?? []
+  const picked = typeof f === 'string'
+    ? places.filter(p => p.kind === f)
+    : [...visibleStops.value, ...places.filter(p => p.kind === 'hotel')]
+  return picked.map(p => L.latLng(p.lat, p.lng))
+}
+
+function fitToView() {
+  const points = fitPoints()
+  if (!map || !points.length) return
   map.invalidateSize()
+  // 尚未顯示（0 尺寸）時算出的縮放會錯，交給 ResizeObserver 在出現時再對焦
+  if (map.getSize().x === 0) {
+    lastWidth = 0
+    return
+  }
   // 釘選往上突出約 30px，上方還有切換按鈕，所以頂部留多一點
-  map.fitBounds(L.latLngBounds(visibleStops.value.map(s => [s.lat, s.lng])), {
+  // 不用動畫：Leaflet 在縮放動畫進行中會忽略新的縮放要求，快速切換分頁時會停在錯的位置
+  map.fitBounds(L.latLngBounds(points), {
+    animate: false,
     paddingTopLeft: [30, 70],
     paddingBottomRight: [30, 20],
-    maxZoom: 16,
+    maxZoom: activeFilter.value === 'airport' ? 13 : typeof activeFilter.value === 'string' ? 15 : 16,
   })
 }
 
@@ -101,14 +140,14 @@ const FitAllControl = L.Control.extend({
     const bar = L.DomUtil.create('div', 'leaflet-bar')
     const btn = L.DomUtil.create('a', 'fit-all-btn', bar)
     btn.href = '#'
-    btn.title = '顯示全部景點'
+    btn.title = '顯示全區'
     btn.setAttribute('role', 'button')
-    btn.setAttribute('aria-label', '顯示全部景點')
+    btn.setAttribute('aria-label', '顯示全區')
     btn.innerHTML = faIcon(faExpand).html.join('')
     L.DomEvent.disableClickPropagation(bar)
     L.DomEvent.on(btn, 'click', e => {
       L.DomEvent.preventDefault(e)
-      fitToStops()
+      fitToView()
     })
     return bar
   },
@@ -118,7 +157,7 @@ const FitAllControl = L.Control.extend({
 let lastWidth = 0
 const resizeObserver = new ResizeObserver(([entry]) => {
   const width = entry.contentRect.width
-  if (lastWidth === 0 && width > 0) fitToStops()
+  if (lastWidth === 0 && width > 0) fitToView()
   else map?.invalidateSize()
   lastWidth = width
 })
@@ -130,9 +169,11 @@ onMounted(() => {
   applyTiles()
   routeLayer.addTo(map)
   markerLayer.addTo(map)
+  placeLayer.addTo(map)
   renderRoutes()
   renderMarkers()
-  fitToStops()
+  renderPlaces()
+  fitToView()
   resizeObserver.observe(el.value!)
 })
 onBeforeUnmount(() => {
@@ -143,7 +184,10 @@ onBeforeUnmount(() => {
 watch(visibleStops, () => {
   renderRoutes()
   renderMarkers()
-  fitToStops()
+})
+watch(activeFilter, fitToView)
+watch(selectedPlace, p => {
+  if (p && map) map.setView([p.lat, p.lng], p.kind === 'airport' ? 13 : 16)
 })
 // 打卡只更新釘選樣式，不移動地圖
 watch(checked, renderMarkers)

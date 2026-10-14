@@ -2,7 +2,6 @@
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCheck, faTrophy } from '@fortawesome/free-solid-svg-icons'
 import type { DayNo, Trip } from '../../shared/types'
-import { navItems } from '../navItems'
 import { dayColors } from '../composables/useTrip'
 import { useCurrentCheckins } from '../composables/useCheckins'
 
@@ -14,50 +13,18 @@ const stampStyle = (day: DayNo, done: boolean) =>
   done
     ? { background: dayColors[day].bg, color: dayColors[day].fg, borderColor: dayColors[day].bg }
     : { borderColor: dayColors[day].bg }
-
-const { route, food, spots, stay, transport } = navItems
-const quick = [route, food, spots, stay, transport]
 </script>
 
 <template>
   <section id="top" class="hero">
     <div class="wrap">
-      <div class="hero-grid">
-        <div>
-          <h1 class="hero-title">
-            Hong Kong
-            <span class="red">{{ trip.days }}D{{ trip.nights }}N TRIP</span>
-          </h1>
-          <p class="hero-zh">{{ trip.title }}</p>
-          <p class="hero-sub">{{ trip.subtitle }}</p>
-          <span class="sticker">( {{ trip.stops.length }} STOPS )</span>
-        </div>
-
-        <!-- 旋轉圓形文字徽章 -->
-        <div class="badge" aria-hidden="true">
-          <svg class="ring" viewBox="0 0 300 300">
-            <defs>
-              <path id="circle" d="M150,150 m-125,0 a125,125 0 1,1 250,0 a125,125 0 1,1 -250,0" />
-            </defs>
-            <text><textPath href="#circle" textLength="780" lengthAdjust="spacing">HONG KONG ✦ 3 DAYS ✦ 2 NIGHTS ✦ EAT ✦ WALK ✦ REPEAT ✦</textPath></text>
-          </svg>
-          <div class="core">
-            <div>
-              <b>NT${{ (trip.avgCostPerPerson / 1000).toFixed(1) }}k</b>
-              <span>PER PERSON</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="banner-pill">
-        <span>◀</span><span class="mid">HK · 3D2N</span><span>▶</span>
-      </div>
-
-      <div class="quick">
-        <a v-for="q in quick" :key="q.href" :href="q.href">
-          <span class="ico"><FontAwesomeIcon :icon="q.icon" /></span>{{ q.label }}<small>{{ q.en }}</small>
-        </a>
+      <div class="hero-head">
+        <p class="eyebrow">HONG KONG · {{ trip.days }}D{{ trip.nights }}N TRIP</p>
+        <h1 class="hero-title">{{ trip.title }}</h1>
+        <p class="hero-sub">{{ trip.subtitle }}</p>
+        <p class="price-tag">
+          <b>NT${{ trip.avgCostPerPerson.toLocaleString() }}</b> / 人<small>平均花費</small>
+        </p>
       </div>
 
       <div class="stamp-card">

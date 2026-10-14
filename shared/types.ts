@@ -21,6 +21,20 @@ export interface Stop {
   imageUrl?: string
 }
 
+/** 行程中的固定地點（非景點／餐廳），例如住宿、機場 */
+export type PlaceKind = 'hotel' | 'airport'
+
+export interface Place {
+  id: string
+  kind: PlaceKind
+  name: string
+  area: string
+  lat: number
+  lng: number
+  desc: string
+  address?: string
+}
+
 export interface Hotel {
   name: string
   nights: number
@@ -58,6 +72,7 @@ export interface Trip {
   transports: TransportInfo[]
   costs: CostItem[]
   stops: Stop[]
+  places: Place[]
 }
 
 // ---- AI 助理 ----

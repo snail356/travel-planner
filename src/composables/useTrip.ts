@@ -1,13 +1,17 @@
 import { computed, ref } from 'vue'
-import type { DayNo, Stop, Trip } from '../../shared/types'
+import type { DayNo, Place, PlaceKind, Stop, Trip } from '../../shared/types'
 import { fetchTrip } from '../services/api'
+
+/** 行程地圖的篩選：0 = 全部、1~3 = 某天、或某一類固定地點 */
+export type MapFilter = 0 | DayNo | PlaceKind
 
 // 全站共用狀態（規模小，先不引入 Pinia）
 const trip = ref<Trip | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
 const selectedStop = ref<Stop | null>(null)
-const activeDay = ref<DayNo | 0>(0)
+const selectedPlace = ref<Place | null>(null)
+const activeFilter = ref<MapFilter>(0)
 
 // 每天的主色與上面文字色（黃色底需用深色字）
 export const dayColors: Record<DayNo, { bg: string; fg: string }> = {
@@ -17,10 +21,23 @@ export const dayColors: Record<DayNo, { bg: string; fg: string }> = {
 }
 export const dayStyle = (day: DayNo) => ({ background: dayColors[day].bg, color: dayColors[day].fg })
 
+export const placeLabels: Record<PlaceKind, string> = { hotel: '住宿', airport: '機場' }
+
+const isPlaceFilter = (f: MapFilter): f is PlaceKind => typeof f === 'string'
+
 export function useTrip() {
-  const visibleStops = computed(() =>
-    (trip.value?.stops ?? []).filter(s => !activeDay.value || s.day === activeDay.value),
-  )
+  const visibleStops = computed(() => {
+    const f = activeFilter.value
+    if (isPlaceFilter(f)) return []
+    return (trip.value?.stops ?? []).filter(s => !f || s.day === f)
+  })
+  /** 列表要顯示的固定地點：全部 → 全部地點；地點分頁 → 該類地點；某天 → 無 */
+  const visiblePlaces = computed(() => {
+    const f = activeFilter.value
+    const places = trip.value?.places ?? []
+    if (f === 0) return places
+    return isPlaceFilter(f) ? places.filter(p => p.kind === f) : []
+  })
   const foodTotal = computed(() =>
     (trip.value?.stops ?? []).reduce((sum, s) => sum + (s.price ?? 0), 0),
   )
@@ -38,8 +55,19 @@ export function useTrip() {
   }
 
   return {
-    trip, loading, error, selectedStop, activeDay, visibleStops, foodTotal, load,
-    selectStop: (s: Stop) => (selectedStop.value = s),
-    closeDetail: () => (selectedStop.value = null),
+    trip, loading, error, selectedStop, selectedPlace, activeFilter,
+    visibleStops, visiblePlaces, foodTotal, load,
+    selectStop(s: Stop) {
+      selectedPlace.value = null
+      selectedStop.value = s
+    },
+    selectPlace(p: Place) {
+      selectedStop.value = null
+      selectedPlace.value = p
+    },
+    closeDetail() {
+      selectedStop.value = null
+      selectedPlace.value = null
+    },
   }
 }

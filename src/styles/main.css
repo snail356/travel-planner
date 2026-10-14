@@ -34,31 +34,13 @@ h2 { margin: 0 0 4px; font-size: 28px; font-weight: 900; color: var(--ink); }
 
 /* Hero */
 .hero { padding: 28px 0 8px; }
-.hero-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; align-items: center; }
-.hero-title { font-family: var(--display); font-weight: 700; color: var(--blue); font-size: clamp(56px, 10vw, 112px); line-height: .9; margin: 0; letter-spacing: -.02em; }
-.hero-title .red { display: block; color: var(--red); font-size: .42em; letter-spacing: .02em; margin-top: 10px; }
-.hero-zh { font-size: 22px; font-weight: 900; margin: 18px 0 4px; }
+.hero-head { max-width: 640px; padding-top: 12px; }
+.hero-title { font-size: clamp(30px, 5vw, 44px); font-weight: 900; line-height: 1.25; margin: 6px 0; color: var(--ink); }
 .hero-sub { color: var(--muted); margin: 0; }
-.sticker { display: inline-block; background: var(--yellow); color: var(--ink); font-family: var(--display); font-weight: 700; padding: 4px 14px; border-radius: 6px; transform: rotate(-6deg); margin-top: 18px; box-shadow: 2px 2px 0 var(--ink); }
-.badge { width: min(360px, 80vw); aspect-ratio: 1; margin: 0 auto; position: relative; }
-.badge svg.ring { width: 100%; height: 100%; animation: spin 30s linear infinite; }
-.badge text { font-family: var(--display); font-weight: 700; font-size: 21px; letter-spacing: 4px; fill: var(--blue); }
-.badge .core { position: absolute; inset: 20%; border-radius: 50%; background: var(--blue); color: #fff; display: grid; place-items: center; text-align: center; font-family: var(--display); }
-.badge .core b { font-size: clamp(36px, 7vw, 54px); line-height: 1; display: block; }
-.badge .core span { font-size: 14px; letter-spacing: .1em; opacity: .85; }
-@keyframes spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .badge svg.ring { animation: none; } }
-
-.banner-pill { margin-top: 28px; background: var(--blue); color: #fff; border-radius: 99px; display: flex; align-items: center; justify-content: space-between; padding: 12px 22px; font-family: var(--display); font-weight: 600; }
-.banner-pill .mid { border: 2px solid #fff; border-radius: 99px; padding: 2px 18px; letter-spacing: .06em; }
-
-.quick { display: grid; grid-template-columns: repeat(5, 1fr); margin-top: 22px; }
-.quick a { text-decoration: none; text-align: center; padding: 6px 0; border-left: 2px solid var(--ink); font-weight: 700; font-size: 15px; }
-.quick a:first-child { border-left: 0; }
-.quick a .ico { display: block; font-size: 24px; line-height: 1; color: var(--blue); margin-bottom: 6px; }
-.quick a:hover .ico { color: var(--red); }
+.price-tag { display: inline-flex; align-items: baseline; gap: 6px; margin: 16px 0 0; padding: 6px 14px; border-radius: 99px; background: #fff; border: 1px solid var(--line); font-size: 14px; color: var(--ink); }
+.price-tag b { font-family: var(--display); font-size: 18px; color: var(--blue); }
+.price-tag small { color: var(--muted); font-size: 12px; margin-left: 4px; }
 .fit-all-btn { display: grid !important; place-items: center; color: var(--ink) !important; font-size: 14px; }
-.quick a small { display: block; font-family: var(--display); font-size: 10px; color: var(--muted); letter-spacing: .08em; }
 
 .stamp-card { margin-top: 26px; background: var(--card); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); }
 .stamp-card .head { display: flex; justify-content: space-between; align-items: center; }
@@ -199,10 +181,7 @@ footer .logo { display: block; margin: 0 0 4px; font-size: 28px; }
 @media (max-width: 800px) {
   section { padding: 36px 0; }
   h2 { font-size: 24px; }
-  .hero-grid, .plan, .two { grid-template-columns: 1fr; }
-  .hero-grid .badge { order: -1; width: 220px; }
-  .quick a { font-size: 13px; }
-  .quick a .ico { font-size: 20px; }
+  .plan, .two { grid-template-columns: 1fr; }
 
   /* 地圖在上、列表在下 */
   .plan .map-wrap { order: -1; }
@@ -238,9 +217,7 @@ footer .logo { display: block; margin: 0 0 4px; font-size: 28px; }
 
 @media (max-width: 420px) {
   .wrap { padding: 0 14px; }
-  .hero-title { font-size: 52px; }
-  .quick a { font-size: 12px; }
-  .quick a small { display: none; }
+  .hero-title { font-size: 28px; }
   .stamp { width: 32px; height: 32px; font-size: 12px; }
   .grid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .card .img { height: 100px; }
@@ -257,3 +234,16 @@ footer .logo { display: block; margin: 0 0 4px; font-size: 28px; }
 .chat-fab { display: inline-flex; align-items: center; gap: 8px; }
 .btn-pill svg { margin-right: 4px; }
 .detail .close { display: grid; place-items: center; font-size: 16px; }
+
+/* 住宿／機場等固定地點 */
+.place-pin { width: 34px; height: 34px; border-radius: 10px; background: var(--ink); color: #fff; display: grid; place-items: center; font-size: 15px; border: 3px solid #fff; box-shadow: 0 2px 6px rgba(27, 35, 80, .35); }
+.num.place-num { background: var(--ink); color: #fff; border-radius: 9px; font-size: 13px; }
+.place-item:not(:last-child) { border-bottom: 1px dashed var(--line); border-radius: 14px 14px 0 0; }
+.place-item + li:not(.place-item) { margin-top: 4px; }
+.tag.tag-ink { background: var(--ink); color: #fff; }
+.detail .place-hero { font-size: 44px; color: var(--blue); }
+.seg button svg { margin-right: 2px; }
+/* 分頁變多，窄螢幕可左右滑動 */
+.seg-scroll { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.seg-scroll::-webkit-scrollbar { display: none; }
+.seg-scroll button { white-space: nowrap; flex: none; }
