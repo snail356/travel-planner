@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>香港三天兩夜</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+  :root {
+    --bg: #fbf8f4; --card: #ffffff; --text: #2b2622; --muted: #7a7068;
+    --line: #e8e1d8; --accent: #c8102e;
+    --d1: #e4572e; --d2: #2e86ab; --d3: #4caf50;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Noto Sans TC", system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  a { color: inherit; }
+
+  /* 導覽列 */
+  nav { position: sticky; top: 0; z-index: 1000; background: var(--card); border-bottom: 1px solid var(--line); }
+  nav .wrap { display: flex; gap: 20px; align-items: center; overflow-x: auto; }
+  nav .logo { font-weight: 700; color: var(--accent); white-space: nowrap; }
+  nav a { text-decoration: none; color: var(--muted); white-space: nowrap; font-size: 14px; }
+  nav a:hover { color: var(--text); }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 14px 16px; }
+  section { padding: 40px 0; border-bottom: 1px solid var(--line); }
+  h2 { margin: 0 0 6px; font-size: 24px; }
+  .sub { color: var(--muted); margin: 0 0 20px; font-size: 14px; }
+  .placeholder { background: repeating-linear-gradient(45deg,#eee,#eee 10px,#f6f6f6 10px,#f6f6f6 20px); color: #999; display: grid; place-items: center; font-size: 13px; }
+
+  /* Hero */
+  .hero { padding: 0; }
+  .hero .banner { height: 300px; border-radius: 0; }
+  .hero .info { display: flex; flex-wrap: wrap; gap: 12px; margin-top: -40px; position: relative; }
+  .hero h1 { margin: 0; font-size: 32px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; min-width: 140px; }
+  .stat b { display: block; font-size: 20px; }
+  .stat span { font-size: 12px; color: var(--muted); }
+
+  /* 行程 + 地圖 */
+  .day-tabs { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .day-tabs button { border: 1px solid var(--line); background: var(--card); padding: 6px 14px; border-radius: 99px; cursor: pointer; font: inherit; font-size: 14px; }
+  .day-tabs button.on { background: var(--text); color: #fff; border-color: var(--text); }
+  .plan { display: grid; grid-template-columns: 340px 1fr; gap: 16px; }
+  #map { height: 560px; border-radius: 12px; border: 1px solid var(--line); }
+  .stops { list-style: none; margin: 0; padding: 0; max-height: 560px; overflow-y: auto; }
+  .stops li { display: flex; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; border: 1px solid transparent; }
+  .stops li:hover, .stops li.active { background: var(--card); border-color: var(--line); }
+  .num { flex: none; width: 26px; height: 26px; border-radius: 50%; color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+  .stops .t { font-weight: 600; }
+  .stops .m { font-size: 12px; color: var(--muted); }
+  .pin { width: 28px; height: 28px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: grid; place-items: center; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+  .pin span { transform: rotate(45deg); color: #fff; font-size: 11px; font-weight: 700; }
+
+  /* 詳細面板 */
+  .detail { position: fixed; right: 0; top: 0; bottom: 0; width: min(380px, 100%); background: var(--card); z-index: 2000; box-shadow: -4px 0 20px rgba(0,0,0,.12); transform: translateX(100%); transition: transform .25s; overflow-y: auto; }
+  .detail.open { transform: none; }
+  .detail .img { height: 200px; }
+  .detail .body { padding: 18px; }
+  .detail .close { position: absolute; top: 10px; right: 10px; border: 0; background: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 18px; }
+  .tag { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 99px; background: #f1ece6; margin-right: 4px; }
+
+  /* 卡片網格 */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; cursor: pointer; }
+  .card .img { height: 140px; }
+  .card .body { padding: 12px 14px; }
+  .card .t { font-weight: 600; }
+  .card .price { color: var(--accent); font-weight: 600; font-size: 14px; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .box { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .box h3 { margin: 0 0 8px; font-size: 17px; }
+  .box ul { margin: 0; padding-left: 18px; }
+
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 12px; overflow: hidden; }
+  td, th { padding: 10px 14px; border-bottom: 1px solid var(--line); text-align: left; }
+  td:last-child, th:last-child { text-align: right; }
+  tfoot td { font-weight: 700; font-size: 18px; color: var(--accent); }
+
+  footer { text-align: center; color: var(--muted); font-size: 13px; padding: 30px 16px; }
+
+  @media (max-width: 800px) {
+    .plan, .two { grid-template-columns: 1fr; }
+    #map { height: 360px; }
+    .stops { max-height: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <span class="logo">HK 3D2N</span>
+  <a href="#itinerary">行程地圖</a>
+  <a href="#food">餐廳美食</a>
+  <a href="#spots">景點</a>
+  <a href="#hotel">住宿</a>
+  <a href="#transport">交通</a>
+  <a href="#cost">花費</a>
+</div></nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="banner placeholder">主視覺照片（香港夜景）</div>
+  <div class="wrap">
+    <div class="info">
+      <div class="stat" style="flex:1 1 300px"><h1>快閃香港三天兩夜</h1><span>行程 + 美食全攻略・19 個停留點</span></div>
+      <div class="stat"><b>3 天 2 夜</b><span>旅遊天數</span></div>
+      <div class="stat"><b>19 站</b><span>景點 + 餐廳</span></div>
+      <div class="stat"><b>NT$15,108</b><span>平均每人花費</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 行程 + 地圖 -->
+<section id="itinerary"><div class="wrap">
+  <h2>行程地圖</h2>
+  <p class="sub">點選列表或地圖釘選查看詳細說明（每日分配與座標為暫定，待確認）</p>
+  <div class="day-tabs" id="dayTabs">
+    <button data-day="0" class="on">全部</button>
+    <button data-day="1">Day 1</button>
+    <button data-day="2">Day 2</button>
+    <button data-day="3">Day 3</button>
+  </div>
+  <div class="plan">
+    <ul class="stops" id="stopList"></ul>
+    <div id="map"></div>
+  </div>
+</div></section>
+
+<!-- 餐廳 -->
+<section id="food"><div class="wrap">
+  <h2>餐廳美食</h2>
+  <p class="sub">點心、茶餐廳、甜點、伴手禮</p>
+  <div class="grid" id="foodGrid"></div>
+</div></section>
+
+<!-- 景點 -->
+<section id="spots"><div class="wrap">
+  <h2>景點</h2>
+  <p class="sub">付費景點皆使用香港 FunPASS（豪華 3 合 1）</p>
+  <div class="grid" id="spotGrid"></div>
+</div></section>
+
+<!-- 住宿 -->
+<section id="hotel"><div class="wrap">
+  <h2>住宿</h2>
+  <p class="sub">兩晚</p>
+  <div class="two">
+    <div class="placeholder" style="min-height:220px;border-radius:12px">飯店照片</div>
+    <div class="box">
+      <h3>OTTO HOTEL</h3>
+      <p><span class="tag">2 晚</span><span class="tag">NT$9,812</span></p>
+      <ul>
+        <li>地址：待補</li>
+        <li>交通：最近地鐵站待補</li>
+        <li>房型 / 心得：待補</li>
+      </ul>
+    </div>
+  </div>
+</div></section>
+
+<!-- 交通 -->
+<section id="transport"><div class="wrap">
+  <h2>交通</h2>
+  <p class="sub">機票、機場往返、市區移動</p>
+  <div class="two">
+    <div class="box">
+      <h3>✈️ 機票：香港快運</h3>
+      <p>來回 NT$4,768／人</p>
+      <ul><li>去程航班：待補</li><li>回程航班：待補</li></ul>
+    </div>
+    <div class="box">
+      <h3>🎟️ 香港 FunPASS（豪華 3 合 1）</h3>
+      <p>NT$2,480／人・可選港澳 30+ 熱門景點</p>
+      <ul>
+        <li>張保仔號、太平山山頂纜車、昂坪 360、機場快線往返票…</li>
+        <li>四種套票：2 合 1／3 合 1／豪華 3 合 1／澳門版</li>
+        <li>可先預約，省去排隊買票時間</li>
+        <li>本次省下約 6% 門票（最高可省 56%）</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>🚋 叮叮車</h3>
+      <p>電車全景遊附贈 2 日叮叮車無限搭乘票</p>
+    </div>
+    <div class="box">
+      <h3>🚇 市區交通</h3>
+      <p>地鐵 / 八達通使用說明：待補</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- 花費 -->
+<section id="cost"><div class="wrap">
+  <h2>花費總覽</h2>
+  <p class="sub">金額為新台幣（餐廳為當次合計）</p>
+  <table>
+    <thead><tr><th>項目</th><th>金額</th></tr></thead>
+    <tbody>
+      <tr><td>香港 FunPASS（豪華 3 合 1）</td><td>$2,480 / 人</td></tr>
+      <tr><td>機票：香港快運來回</td><td>$4,768 / 人</td></tr>
+      <tr><td>住宿：OTTO HOTEL 兩晚</td><td>$9,812</td></tr>
+      <tr><td>餐飲（各餐廳合計）</td><td id="foodTotal"></td></tr>
+    </tbody>
+    <tfoot><tr><td>平均一人花費</td><td>$15,108</td></tr></tfoot>
+  </table>
+</div></section>
+
+<footer>快閃香港三天兩夜・行程規劃草稿</footer>
+
+<!-- 詳細面板 -->
+<aside class="detail" id="detail">
+  <button class="close" id="closeDetail" aria-label="關閉">×</button>
+  <div class="img placeholder">照片</div>
+  <div class="body" id="detailBody"></div>
+</aside>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+// 資料：type = food / spot；day 與座標為暫定
+const stops = [
+  { n:1,  name:"一點心",           type:"food", day:1, price:880,  area:"太子",     lat:22.3247, lng:114.1686, desc:"米其林推薦平價點心。" },
+  { n:2,  name:"蘭苑饎館",         type:"food", day:1, price:177,  area:"待確認",   lat:22.2840, lng:114.1545, desc:"說明待補。" },
+  { n:3,  name:"HashtagB",         type:"food", day:1, price:72,   area:"銅鑼灣",   lat:22.2803, lng:114.1845, desc:"網紅甜品／飲品。" },
+  { n:4,  name:"霸王茶姬",         type:"food", day:1, price:128,  area:"待確認",   lat:22.2812, lng:114.1820, desc:"人氣茶飲。" },
+  { n:5,  name:"太平山山頂纜車",   type:"spot", day:1, pass:true,  area:"中環",     lat:22.2777, lng:114.1595, desc:"FunPASS 可用，搭纜車上太平山頂。" },
+  { n:6,  name:"Bake House",       type:"food", day:1, price:56,   area:"灣仔",     lat:22.2744, lng:114.1720, desc:"超人氣酸種蛋塔。" },
+  { n:7,  name:"凌霄閣摩天台 428", type:"spot", day:1, pass:true,  area:"山頂",     lat:22.2711, lng:114.1497, desc:"FunPASS 可用，360° 俯瞰維港夜景。" },
+  { n:8,  name:"張保仔號",         type:"spot", day:2, pass:true,  area:"維港",     lat:22.2935, lng:114.1690, desc:"FunPASS 可用，古帆船遊維港。" },
+  { n:9,  name:"妹記大排檔",       type:"food", day:2, price:1994, area:"待確認",   lat:22.3300, lng:114.1620, desc:"港式大排檔熱炒。" },
+  { n:10, name:"ChaTraMue",        type:"food", day:2, price:128,  area:"待確認",   lat:22.2990, lng:114.1720, desc:"泰式手標茶飲。" },
+  { n:11, name:"瑞記咖啡",         type:"food", day:2, price:313,  area:"待確認",   lat:22.2850, lng:114.1520, desc:"港式茶餐廳。" },
+  { n:12, name:"電車全景遊",       type:"spot", day:2, pass:true,  area:"港島",     lat:22.2870, lng:114.1500, desc:"FunPASS 可用，贈 2 日叮叮車無限搭乘票。" },
+  { n:13, name:"丹麥餅店",         type:"food", day:2, price:84,   area:"待確認",   lat:22.2790, lng:114.1870, desc:"老字號麵包店。" },
+  { n:14, name:"珍妮曲奇",         type:"food", day:2, price:320,  area:"尖沙咀",   lat:22.2975, lng:114.1722, desc:"必買伴手禮小熊曲奇。" },
+  { n:15, name:"海底撈",           type:"food", day:3,              area:"待確認",   lat:22.2985, lng:114.1735, desc:"火鍋。" },
+  { n:16, name:"彩虹邨",           type:"spot", day:3,              area:"彩虹",     lat:22.3325, lng:114.2075, desc:"彩色公屋打卡點，免費。" },
+  { n:17, name:"嘉多娜麵包店",     type:"food", day:3, price:60,   area:"待確認",   lat:22.3305, lng:114.2040, desc:"說明待補。" },
+  { n:18, name:"旗子燒鵝",         type:"food", day:3, price:464,  area:"待確認",   lat:22.3280, lng:114.1910, desc:"燒鵝燒味。" },
+  { n:19, name:"紅茶冰室",         type:"food", day:3, price:172,  area:"待確認",   lat:22.3290, lng:114.1895, desc:"港式冰室。" },
+];
+const dayColor = { 1:"var(--d1)", 2:"var(--d2)", 3:"var(--d3)" };
+const dayHex   = { 1:"#e4572e", 2:"#2e86ab", 3:"#4caf50" };
+
+// 地圖
+const map = L.map("map").setView([22.300, 114.175], 13);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19, attribution: "&copy; OpenStreetMap"
+}).addTo(map);
+
+const markers = {};
+stops.forEach(s => {
+  const icon = L.divIcon({
+    className: "", iconSize: [28, 28], iconAnchor: [14, 28],
+    html: `<div class="pin" style="background:${dayHex[s.day]}"><span>${s.n}</span></div>`
+  });
+  markers[s.n] = L.marker([s.lat, s.lng], { icon })
+    .addTo(map)
+    .bindTooltip(`${s.n}. ${s.name}`)
+    .on("click", () => openDetail(s));
+});
+
+// 側邊列表
+const list = document.getElementById("stopList");
+function renderList(day) {
+  list.innerHTML = "";
+  const shown = stops.filter(s => !day || s.day === day);
+  shown.forEach(s => {
+    const li = document.createElement("li");
+    li.innerHTML = `<div class="num" style="background:${dayColor[s.day]}">${s.n}</div>
+      <div><div class="t">${s.name}</div>
+      <div class="m">Day ${s.day}・${s.type === "food" ? "餐廳" : "景點"}${s.price ? "・$" + s.price : ""}</div></div>`;
+    li.onclick = () => { map.setView([s.lat, s.lng], 16); openDetail(s); };
+    list.appendChild(li);
+  });
+  stops.forEach(s => {
+    const m = markers[s.n];
+    (!day || s.day === day) ? m.addTo(map) : m.remove();
+  });
+  map.fitBounds(L.latLngBounds(shown.map(s => [s.lat, s.lng])), { padding: [30, 30] });
+}
+document.getElementById("dayTabs").addEventListener("click", e => {
+  if (e.target.tagName !== "BUTTON") return;
+  document.querySelectorAll("#dayTabs button").forEach(b => b.classList.toggle("on", b === e.target));
+  renderList(+e.target.dataset.day);
+});
+
+// 詳細面板
+const detail = document.getElementById("detail");
+function openDetail(s) {
+  document.getElementById("detailBody").innerHTML = `
+    <p><span class="tag" style="background:${dayHex[s.day]};color:#fff">Day ${s.day}</span>
+       <span class="tag">第 ${s.n} 站</span>
+       <span class="tag">${s.type === "food" ? "餐廳" : "景點"}</span>
+       ${s.pass ? '<span class="tag">FunPASS</span>' : ""}</p>
+    <h2>${s.name}</h2>
+    <p>${s.desc}</p>
+    <p><b>區域：</b>${s.area}</p>
+    ${s.price ? `<p><b>花費：</b>NT$${s.price}</p>` : ""}
+    <p><b>營業時間：</b>待補</p>
+    <p><b>推薦品項 / 心得：</b>待補</p>
+    <p><a href="https://www.google.com/maps/search/?api=1&query=${s.lat},${s.lng}" target="_blank" rel="noopener">在 Google 地圖開啟 →</a></p>`;
+  detail.classList.add("open");
+}
+document.getElementById("closeDetail").onclick = () => detail.classList.remove("open");
+
+// 卡片
+function card(s) {
+  const el = document.createElement("div");
+  el.className = "card";
+  el.innerHTML = `<div class="img placeholder">照片</div>
+    <div class="body"><div class="t">${s.n}. ${s.name}</div>
+    <div class="m" style="font-size:12px;color:var(--muted)">Day ${s.day}・${s.area}</div>
+    ${s.price ? `<div class="price">NT$${s.price}</div>` : s.pass ? '<div class="price">FunPASS</div>' : ""}</div>`;
+  el.onclick = () => openDetail(s);
+  return el;
+}
+stops.filter(s => s.type === "food").forEach(s => foodGrid.appendChild(card(s)));
+stops.filter(s => s.type === "spot").forEach(s => spotGrid.appendChild(card(s)));
+document.getElementById("foodTotal").textContent =
+  "$" + stops.reduce((a, s) => a + (s.price || 0), 0).toLocaleString();
+
+renderList(0);
+</script>
+</body>
+</html>
