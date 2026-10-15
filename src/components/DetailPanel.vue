@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCircleCheck, faLocationDot, faStamp, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { dayStyle, placeLabels, useTrip } from '../composables/useTrip'
@@ -9,15 +10,57 @@ import StopPhoto from './StopPhoto.vue'
 const { selectedStop: s, selectedPlace: p, closeDetail } = useTrip()
 const { isChecked, toggle } = useCurrentCheckins()
 
+// 點面板以外的地方自動收回
+const panel = ref<HTMLElement>()
+const current = () => s.value ?? p.value
+let downX = 0
+let downY = 0
+let selectionAtDown: unknown = null
+
+// 用 capture 在其他元件處理點擊前，先記下按下時的位置與選取的站點
+function onPointerDown(e: PointerEvent) {
+  downX = e.clientX
+  downY = e.clientY
+  selectionAtDown = current()
+}
+
+function onDocumentClick(e: MouseEvent) {
+  if (!current()) return
+  if (panel.value?.contains(e.target as Node)) return
+  // 這次點擊選了另一站（卡片、列表、釘選）：保持開啟並切換內容
+  if (current() !== selectionAtDown) return
+  // 拖曳地圖不算點擊
+  if (Math.hypot(e.clientX - downX, e.clientY - downY) > 6) return
+  closeDetail()
+}
+
+function onKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape' && current()) closeDetail()
+}
+
+onMounted(() => {
+  document.addEventListener('pointerdown', onPointerDown, true)
+  document.addEventListener('click', onDocumentClick)
+  document.addEventListener('keydown', onKeydown)
+})
+onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', onPointerDown, true)
+  document.removeEventListener('click', onDocumentClick)
+  document.removeEventListener('keydown', onKeydown)
+})
+
 // 用名稱搜尋 Google 地圖，比座標更準確找到店家頁面
 const mapsUrl = (name: string) =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${name} 香港`)}`
 </script>
 
 <template>
-  <aside class="detail" :class="{ open: s || p }" aria-label="站點詳情">
+  <aside ref="panel" class="detail" :class="{ open: s || p }" aria-label="站點詳情">
     <span class="sheet-handle" aria-hidden="true"></span>
-    <button class="close" aria-label="關閉" @click="closeDetail"><FontAwesomeIcon :icon="faXmark" /></button>
+    <!-- 高度 0 的置頂層：關閉鈕疊在照片上，捲動抽屜時也固定在右上角 -->
+    <div class="detail-top">
+      <button class="close" aria-label="關閉" @click="closeDetail"><FontAwesomeIcon :icon="faXmark" /></button>
+    </div>
     <template v-if="s">
       <StopPhoto :stop="s" />
       <div class="body">

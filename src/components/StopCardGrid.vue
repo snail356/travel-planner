@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faCheck, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import type { Stop } from '../../shared/types'
 import { useTrip } from '../composables/useTrip'
 import { useCurrentCheckins } from '../composables/useCheckins'
@@ -34,7 +34,6 @@ const { isChecked } = useCurrentCheckins()
                 <template v-else>免費</template>
               </span>
               <span v-if="isChecked(s.id)" class="done-mark" title="已打卡"><FontAwesomeIcon :icon="faCheck" /></span>
-              <span v-else class="plus" aria-hidden="true"><FontAwesomeIcon :icon="faPlus" /></span>
             </div>
           </div>
         </div>
