@@ -28,6 +28,8 @@ export interface ImageCredit {
   license: string
   /** 照片來源頁面 */
   sourceUrl: string
+  /** 補充說明，例如「示意圖」（非該店實拍）或「中環分店」 */
+  note?: string
 }
 
 /** 行程中的固定地點（非景點／餐廳），例如住宿、機場 */

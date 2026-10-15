@@ -15,7 +15,7 @@ defineProps<{ stop: Stop }>()
       target="_blank"
       rel="noopener"
       @click.stop
-    >Photo: {{ stop.imageCredit.author }} / {{ stop.imageCredit.license }}</a>
+    ><template v-if="stop.imageCredit.note">{{ stop.imageCredit.note }} · </template>Photo: {{ stop.imageCredit.author }} / {{ stop.imageCredit.license }}</a>
   </div>
   <div v-else class="img placeholder">照片</div>
 </template>

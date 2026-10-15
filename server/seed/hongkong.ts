@@ -1,4 +1,8 @@
-import type { Trip } from '../../shared/types.js'
+import type { Stop, Trip } from '../../shared/types.js'
+import { hongkongPhotos } from './hongkong-photos.js'
+
+// 照片另外放在 hongkong-photos.ts，避免長網址讓站點表難讀
+const withPhotos = (stops: Stop[]): Stop[] => stops.map(s => ({ ...s, ...hongkongPhotos[s.id] }))
 
 // 種子資料：每日分配與部分座標為暫定，待確認
 export const hongkongTrip: Trip = {
@@ -69,19 +73,10 @@ export const hongkongTrip: Trip = {
       desc: '搭香港快運往返。可用 FunPASS 的機場快線往返票進市區。',
     },
   ],
-  stops: [
-    {
-      id: 1, name: '一點心', type: 'food', day: 1, price: 880, area: '太子', lat: 22.3247, lng: 114.1686,
-      desc: '米其林推薦平價點心。',
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/One_Dim_Sum%2C_Michelin-Star_Fast_Food_Dim_Sum_in_Hong_Kong_SML.20120818.IP3_%287809374102%29.jpg/960px-One_Dim_Sum%2C_Michelin-Star_Fast_Food_Dim_Sum_in_Hong_Kong_SML.20120818.IP3_%287809374102%29.jpg',
-      imageCredit: {
-        author: 'See-ming Lee',
-        license: 'CC BY-SA 2.0',
-        sourceUrl: 'https://commons.wikimedia.org/wiki/File:One_Dim_Sum,_Michelin-Star_Fast_Food_Dim_Sum_in_Hong_Kong_SML.20120818.IP3_(7809374102).jpg',
-      },
-    },
+  stops: withPhotos([
+    { id: 1,  name: '一點心',           type: 'food', day: 1, price: 880,  area: '太子',   lat: 22.3247, lng: 114.1686, desc: '米其林推薦平價點心。' },
     { id: 2,  name: '蘭苑饎館',         type: 'food', day: 1, price: 177,  area: '待確認', lat: 22.2840, lng: 114.1545, desc: '說明待補。' },
-    { id: 3,  name: 'HashtagB',         type: 'food', day: 1, price: 72,   area: '銅鑼灣', lat: 22.2803, lng: 114.1845, desc: '網紅甜品／飲品。' },
+    { id: 3,  name: 'HashtagB',         type: 'food', day: 1, price: 72,   area: '銅鑼灣', lat: 22.2803, lng: 114.1845, desc: '人氣烘焙店，招牌拿破崙焦糖千層塔。' },
     { id: 4,  name: '霸王茶姬',         type: 'food', day: 1, price: 128,  area: '待確認', lat: 22.2812, lng: 114.1820, desc: '人氣茶飲。' },
     { id: 5,  name: '太平山山頂纜車',   type: 'spot', day: 1, pass: true,  area: '中環',   lat: 22.2777, lng: 114.1595, desc: 'FunPASS 可用，搭纜車上太平山頂。' },
     { id: 6,  name: 'Bake House',       type: 'food', day: 1, price: 56,   area: '灣仔',   lat: 22.2744, lng: 114.1720, desc: '超人氣酸種蛋塔。' },
@@ -98,5 +93,5 @@ export const hongkongTrip: Trip = {
     { id: 17, name: '嘉多娜麵包店',     type: 'food', day: 3, price: 60,   area: '待確認', lat: 22.3305, lng: 114.2040, desc: '說明待補。' },
     { id: 18, name: '旗子燒鵝',         type: 'food', day: 3, price: 464,  area: '待確認', lat: 22.3280, lng: 114.1910, desc: '燒鵝燒味。' },
     { id: 19, name: '紅茶冰室',         type: 'food', day: 3, price: 172,  area: '待確認', lat: 22.3290, lng: 114.1895, desc: '港式冰室。' },
-  ],
+  ]),
 }
