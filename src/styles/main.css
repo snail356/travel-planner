@@ -253,3 +253,16 @@ footer .logo { display: block; margin: 0 0 4px; font-size: 28px; }
 .photo-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center 35%; display: block; }
 .photo-wrap .credit { position: absolute; right: 6px; bottom: 6px; max-width: calc(100% - 12px); font-size: 10px; line-height: 1.4; color: #fff; background: rgba(27, 35, 80, .6); padding: 1px 6px; border-radius: 4px; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .photo-wrap .credit:hover { text-decoration: underline; }
+
+/* 景點標示：相機圖示膠囊（餐廳維持水滴／圓形） */
+.spot-pin { position: absolute; left: 0; bottom: 8px; transform: translateX(-50%); --c: var(--blue); background: var(--c); display: flex; align-items: center; gap: 3px; height: 28px; padding: 0 9px 0 8px; border-radius: 99px; border: 3px solid #fff; box-shadow: 0 2px 6px rgba(27, 35, 80, .35); font-size: 12px; font-weight: 700; font-family: var(--display); white-space: nowrap; cursor: pointer; }
+.spot-pin svg { width: 12px; height: 12px; }
+.spot-pin::before, .spot-pin::after { content: ""; position: absolute; left: 50%; border-style: solid; border-color: transparent; }
+.spot-pin::before { bottom: -12px; margin-left: -7px; border-width: 9px 7px 0; border-top-color: #fff; }
+.spot-pin::after { bottom: -7px; margin-left: -4px; border-width: 6px 4px 0; border-top-color: var(--c); }
+.spot-pin .pin-done { top: -10px; right: -10px; transform: none; }
+.num.spot-num { width: auto; min-width: 30px; padding: 0 8px; border-radius: 99px; display: inline-flex; gap: 3px; font-size: 12px; }
+.num.spot-num svg { width: 11px; height: 11px; }
+.stamp.spot { width: auto; min-width: 48px; padding: 0 8px; border-radius: 99px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 12px; }
+.stamp.spot svg { width: 11px; height: 11px; }
+.stamp.spot.done svg { width: 14px; height: 14px; }

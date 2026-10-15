@@ -6,6 +6,7 @@ import { faCheck, faExpand } from '@fortawesome/free-solid-svg-icons'
 import type { DayNo } from '../../shared/types'
 import { dayColors, placeLabels, useTrip } from '../composables/useTrip'
 import { placeIcons } from '../icons'
+import { navItems } from '../navItems'
 import { useCurrentCheckins } from '../composables/useCheckins'
 
 type MapStyle = 'simple' | 'detailed'
@@ -25,6 +26,7 @@ const TILES: Record<MapStyle, { url: string; attribution?: string }[]> = {
 
 // Leaflet 釘選是純 HTML 字串，直接用 Font Awesome 產生的 SVG
 const CHECK_SVG = faIcon(faCheck).html.join('')
+const CAMERA_SVG = faIcon(navItems.spots.icon).html.join('')
 
 const { trip, visibleStops, selectedStop, selectedPlace, activeFilter, selectStop, selectPlace } = useTrip()
 const { checked, isChecked } = useCurrentCheckins()
@@ -51,12 +53,22 @@ function renderMarkers() {
   if (!map) return
   markerLayer.clearLayers()
   for (const s of visibleStops.value) {
-    const icon = L.divIcon({
-      className: '',
-      iconSize: [30, 30],
-      iconAnchor: [15, 30],
-      html: `<div class="pin" style="background:${dayColors[s.day].bg};color:${dayColors[s.day].fg}"><span>${s.id}</span>${isChecked(s.id) ? `<i class="pin-done">${CHECK_SVG}</i>` : ''}</div>`,
-    })
+    const { bg, fg } = dayColors[s.day]
+    const done = isChecked(s.id) ? `<i class="pin-done">${CHECK_SVG}</i>` : ''
+    // 餐廳：水滴；景點：相機圖示膠囊（寬度不固定，用 0 尺寸錨點 + CSS 置中，尖端對準位置）
+    const icon = s.type === 'spot'
+      ? L.divIcon({
+          className: '',
+          iconSize: [0, 0],
+          iconAnchor: [0, 0],
+          html: `<div class="spot-pin" style="--c:${bg};color:${fg}">${CAMERA_SVG}<span>${s.id}</span>${done}</div>`,
+        })
+      : L.divIcon({
+          className: '',
+          iconSize: [30, 30],
+          iconAnchor: [15, 30],
+          html: `<div class="pin" style="background:${bg};color:${fg}"><span>${s.id}</span>${done}</div>`,
+        })
     L.marker([s.lat, s.lng], { icon })
       .bindTooltip(`${s.id}. ${s.name}`)
       .on('click', () => selectStop(s))

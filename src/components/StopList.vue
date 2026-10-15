@@ -5,6 +5,7 @@ import type { Place, Stop } from '../../shared/types'
 import { dayStyle, placeLabels, useTrip } from '../composables/useTrip'
 import { useCurrentCheckins } from '../composables/useCheckins'
 import { placeIcons } from '../icons'
+import { navItems } from '../navItems'
 
 const { visibleStops, visiblePlaces, selectedStop, selectedPlace, selectStop, selectPlace } = useTrip()
 const { isChecked } = useCurrentCheckins()
@@ -46,7 +47,9 @@ function pickPlace(p: Place) {
       :class="{ active: selectedStop?.id === s.id }"
       @click="pickStop(s)"
     >
-      <div class="num" :style="dayStyle(s.day)">{{ s.id }}</div>
+      <div class="num" :class="{ 'spot-num': s.type === 'spot' }" :style="dayStyle(s.day)">
+        <FontAwesomeIcon v-if="s.type === 'spot'" :icon="navItems.spots.icon" />{{ s.id }}
+      </div>
       <div class="grow">
         <div class="t">{{ s.name }}</div>
         <div class="m">

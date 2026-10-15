@@ -4,11 +4,12 @@ import { faCheck, faTrophy } from '@fortawesome/free-solid-svg-icons'
 import type { DayNo, Trip } from '../../shared/types'
 import { dayColors } from '../composables/useTrip'
 import { useCurrentCheckins } from '../composables/useCheckins'
+import { navItems } from '../navItems'
 
 defineProps<{ trip: Trip }>()
 const { count, isChecked, toggle, reset } = useCurrentCheckins()
 
-// 未打卡：空心圈；已打卡：當天顏色實心
+// 未打卡：空心；已打卡：當天顏色實心（景點為相機膠囊，餐廳為圓圈）
 const stampStyle = (day: DayNo, done: boolean) =>
   done
     ? { background: dayColors[day].bg, color: dayColors[day].fg, borderColor: dayColors[day].bg }
@@ -40,12 +41,17 @@ const stampStyle = (day: DayNo, done: boolean) =>
             v-for="s in trip.stops"
             :key="s.id"
             class="stamp"
-            :class="{ done: isChecked(s.id) }"
+            :class="{ done: isChecked(s.id), spot: s.type === 'spot' }"
             :style="stampStyle(s.day, isChecked(s.id))"
             :aria-pressed="isChecked(s.id)"
             :title="`${s.name}${isChecked(s.id) ? '（已打卡）' : ''}`"
             @click="toggle(s.id)"
-          ><FontAwesomeIcon v-if="isChecked(s.id)" :icon="faCheck" /><template v-else>{{ s.id }}</template></button>
+          >
+            <FontAwesomeIcon v-if="isChecked(s.id)" :icon="faCheck" />
+            <template v-else>
+              <FontAwesomeIcon v-if="s.type === 'spot'" :icon="navItems.spots.icon" />{{ s.id }}
+            </template>
+          </button>
         </div>
         <p class="stamp-hint">
           <template v-if="count === trip.stops.length"><FontAwesomeIcon :icon="faTrophy" class="trophy" /> 全部完成！</template>
