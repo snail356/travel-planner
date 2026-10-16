@@ -9,7 +9,8 @@ function storeFor(tripId: string): Ref<number[]> {
   let store = stores.get(tripId)
   if (store) return store
 
-  const key = `checkins:${tripId}`
+  // v2：站點依新動線重新編號，舊紀錄的站號對不上，改用新的 key 重新開始
+  const key = `checkins:v2:${tripId}`
   let initial: number[] = []
   try {
     const parsed: unknown = JSON.parse(localStorage.getItem(key) ?? '[]')

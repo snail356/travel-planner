@@ -51,7 +51,7 @@ export function buildTripContext(trip: Trip): string {
 說明：${trip.subtitle}
 平均每人花費：NT$${trip.avgCostPerPerson.toLocaleString()}
 
-行程動線（依天數與時段，站點依造訪順序；[編號] 是站號，不代表順序）：
+行程動線（依天數與時段，[編號] 即造訪順序）：
 ${stops}
 
 住宿與機場：

@@ -13,7 +13,7 @@ export const hongkongPhotos: Record<number, Pick<Stop, 'imageUrl' | 'imageCredit
     },
   },
   // 蘭苑饎館
-  2: {
+  13: {
     imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ea/Hong_Kong-style_French_toast_%285522869044%29.jpg/960px-Hong_Kong-style_French_toast_%285522869044%29.jpg',
     imageCredit: {
       author: 'Melvin Loi from Macau, Macau',
@@ -23,7 +23,7 @@ export const hongkongPhotos: Record<number, Pick<Stop, 'imageUrl' | 'imageCredit
     },
   },
   // HashtagB
-  3: {
+  4: {
     imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/A_egg_tart_and_coconut_tart_in_Cafe_2.0.jpg/960px-A_egg_tart_and_coconut_tart_in_Cafe_2.0.jpg',
     imageCredit: {
       author: 'Peachyeung316',
@@ -33,7 +33,7 @@ export const hongkongPhotos: Record<number, Pick<Stop, 'imageUrl' | 'imageCredit
     },
   },
   // 霸王茶姬
-  4: {
+  2: {
     imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f5/SZ_%E6%B7%B1%E5%9C%B3_Shenzhen_%E9%BE%8D%E5%B4%97_Longgang_%E9%BE%8D%E5%B4%97%E5%A4%A7%E9%81%93_Longgang_Avenue_%E6%98%9F%E9%83%BD%E9%87%8C%E5%95%86%E5%A0%B4_OMG_Xing_Too_Li_Shopping_Mall_shop_%E9%9C%B8%E7%8E%8B%E8%8C%B6%E5%A7%AC_Chagee_Beverage_February_2025_R12S_03.jpg/960px-thumbnail.jpg',
     imageCredit: {
       author: 'MUKSWO msrdoow',
@@ -52,7 +52,7 @@ export const hongkongPhotos: Record<number, Pick<Stop, 'imageUrl' | 'imageCredit
     },
   },
   // Bake House
-  6: {
+  3: {
     imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3f/Custard%2BEgg%2BTarts%2B-%2BHong%2BKong.jpg/960px-Custard%2BEgg%2BTarts%2B-%2BHong%2BKong.jpg',
     imageCredit: {
       author: 'Donatingpictures',
@@ -62,7 +62,7 @@ export const hongkongPhotos: Record<number, Pick<Stop, 'imageUrl' | 'imageCredit
     },
   },
   // 凌霄閣摩天台 428
-  7: {
+  6: {
     imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d0/ThePeakTowerViewingTerrace.JPG/960px-ThePeakTowerViewingTerrace.JPG',
     imageCredit: {
       author: 'WiNG',
@@ -71,7 +71,7 @@ export const hongkongPhotos: Record<number, Pick<Stop, 'imageUrl' | 'imageCredit
     },
   },
   // 張保仔號
-  8: {
+  7: {
     imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/Chinese_Junk%2C_Victoria_Harbour%2C_Hong_Kong_%2816455719585%29.jpg/960px-Chinese_Junk%2C_Victoria_Harbour%2C_Hong_Kong_%2816455719585%29.jpg',
     imageCredit: {
       author: 'Ray in Manila',
@@ -80,7 +80,7 @@ export const hongkongPhotos: Record<number, Pick<Stop, 'imageUrl' | 'imageCredit
     },
   },
   // 妹記大排檔
-  9: {
+  8: {
     imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Dai_pai_dong_Central.jpg/960px-Dai_pai_dong_Central.jpg',
     imageCredit: {
       author: 'K.C. Tang',
@@ -90,7 +90,7 @@ export const hongkongPhotos: Record<number, Pick<Stop, 'imageUrl' | 'imageCredit
     },
   },
   // ChaTraMue
-  10: {
+  9: {
     imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d9/HK_CWB_%E9%8A%85%E9%91%BC%E7%81%A3_Causeway_Bay_%E6%B8%A3%E7%94%B8%E8%A1%97_Jardine%27s_Bazaar_shop_April_2021_SS2_08_ChaTraMue.jpg/960px-HK_CWB_%E9%8A%85%E9%91%BC%E7%81%A3_Causeway_Bay_%E6%B8%A3%E7%94%B8%E8%A1%97_Jardine%27s_Bazaar_shop_April_2021_SS2_08_ChaTraMue.jpg',
     imageCredit: {
       author: 'KWOJNG ekwiuel AWAN',
@@ -100,7 +100,7 @@ export const hongkongPhotos: Record<number, Pick<Stop, 'imageUrl' | 'imageCredit
     },
   },
   // 瑞記咖啡
-  11: {
+  10: {
     imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4e/Hong_Kong_Milk_Tea%2C_Cha_Chaan_Teng-style_with_Black_and_White_cup.jpg/960px-Hong_Kong_Milk_Tea%2C_Cha_Chaan_Teng-style_with_Black_and_White_cup.jpg',
     imageCredit: {
       author: 'Nikoletic126',
@@ -110,7 +110,7 @@ export const hongkongPhotos: Record<number, Pick<Stop, 'imageUrl' | 'imageCredit
     },
   },
   // 電車全景遊
-  12: {
+  11: {
     imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/02/TramOramic_Tour_Tram.JPG/960px-TramOramic_Tour_Tram.JPG',
     imageCredit: {
       author: 'Ceeseven',
@@ -119,7 +119,7 @@ export const hongkongPhotos: Record<number, Pick<Stop, 'imageUrl' | 'imageCredit
     },
   },
   // 丹麥餅店
-  13: {
+  12: {
     imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7a/HK_CWB_106-126_Leighton_Road_%E7%A6%AE%E4%BF%A1%E5%A4%A7%E5%BB%88_Lei_Shun_Court_July-2014_shop_Danish_Bakery_name_sign.JPG/960px-HK_CWB_106-126_Leighton_Road_%E7%A6%AE%E4%BF%A1%E5%A4%A7%E5%BB%88_Lei_Shun_Court_July-2014_shop_Danish_Bakery_name_sign.JPG',
     imageCredit: {
       author: 'DWarrenwoodsle',
@@ -128,7 +128,7 @@ export const hongkongPhotos: Record<number, Pick<Stop, 'imageUrl' | 'imageCredit
     },
   },
   // 珍妮曲奇
-  14: {
+  15: {
     imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/HK_%E4%B8%AD%E7%92%B0_Central_%E6%B0%B8%E5%92%8C%E8%A1%97_Wing_Wo_Street_shop_%E7%8F%8D%E5%A6%AE%E6%9B%B2%E5%A5%87_Jenny_Bakery_n_visitors_long_queue_March_2026_N13P_04.jpg/960px-HK_%E4%B8%AD%E7%92%B0_Central_%E6%B0%B8%E5%92%8C%E8%A1%97_Wing_Wo_Street_shop_%E7%8F%8D%E5%A6%AE%E6%9B%B2%E5%A5%87_Jenny_Bakery_n_visitors_long_queue_March_2026_N13P_04.jpg',
     imageCredit: {
       author: 'Luksongm MWLLOPPEE',
@@ -138,7 +138,7 @@ export const hongkongPhotos: Record<number, Pick<Stop, 'imageUrl' | 'imageCredit
     },
   },
   // 海底撈
-  15: {
+  16: {
     imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Haidilao_Hot_Pot_in_OP_Mall_202005.jpg/960px-Haidilao_Hot_Pot_in_OP_Mall_202005.jpg',
     imageCredit: {
       author: 'Wpcpey',
@@ -148,7 +148,7 @@ export const hongkongPhotos: Record<number, Pick<Stop, 'imageUrl' | 'imageCredit
     },
   },
   // 彩虹邨
-  16: {
+  18: {
     imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/Choi_Hung_building_Adam-morse-79671-unsplash.jpg/960px-Choi_Hung_building_Adam-morse-79671-unsplash.jpg',
     imageCredit: {
       author: 'Adam Morse',
@@ -166,7 +166,7 @@ export const hongkongPhotos: Record<number, Pick<Stop, 'imageUrl' | 'imageCredit
     },
   },
   // 旗子燒鵝
-  18: {
+  14: {
     imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/44/Roast_Goose_Rice_with_Plum_Sauce.jpg/960px-Roast_Goose_Rice_with_Plum_Sauce.jpg',
     imageCredit: {
       author: 'Ceeseven',
