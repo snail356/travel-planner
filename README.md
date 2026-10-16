@@ -114,11 +114,14 @@ Hongkong.html        原始 HTML 雛形（參考用）
 - `src/composables/useCheckins.ts`：打卡紀錄存在瀏覽器 localStorage（key：`checkins:<tripId>`），離線可用。
 - 之後有登入時，可加 `/api/checkins` 同步到資料庫。
 
-## RWD / PWA 準備
+## RWD / PWA
 
 - 斷點：≤1024 平板、≤800 手機（底部 tab bar、地圖在列表上方、詳情改為底部抽屜）、≤420 小手機。
 - 已加 `viewport-fit=cover`、`theme-color`，底部元件有預留 iPhone 安全區域（`env(safe-area-inset-bottom)`）。
-- 轉 PWA 時：加 `vite-plugin-pwa`（manifest、icon、service worker 快取地圖圖磚與 `/api/trip`）。
+- PWA 由 `vite-plugin-pwa` 產生（設定在 `vite.config.ts` 的 `pwa()`），只在 `npm run build` 後生效，`npm run dev` 不會註冊 service worker：
+  - 可加到主畫面，以獨立視窗開啟；新版部署後自動更新。
+  - 離線時：網頁本身、`/api/trip`、`/api/rate`（上次的資料）、看過的地圖圖磚、景點照片與字型都能顯示；AI 助理需要網路。
+- 圖示來源是 `public/icon.svg`，改完後執行 `npm run icons` 重新產生 `public/` 下的 PNG 與 favicon。
 
 ## 部署到 Vercel
 
