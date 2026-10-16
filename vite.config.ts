@@ -30,12 +30,32 @@ function vercelApiDev(): Plugin {
           for await (const chunk of req) chunks.push(chunk as Buffer)
           const hasBody = method !== 'GET' && method !== 'HEAD'
 
+          // 使用者中斷（關頁、重新整理對話）時通知 API，例如停止 AI 回覆，比照部署環境
+          const abort = new AbortController()
+          res.on('close', () => {
+            if (!res.writableFinished) abort.abort()
+          })
+
           const response = await handler(
-            new Request(url, { method, headers, body: hasBody ? Buffer.concat(chunks) : undefined }),
+            new Request(url, {
+              method,
+              headers,
+              body: hasBody ? Buffer.concat(chunks) : undefined,
+              signal: abort.signal,
+            }),
           )
           res.statusCode = response.status
           response.headers.forEach((v, k) => res.setHeader(k, v))
-          res.end(Buffer.from(await response.arrayBuffer()))
+          // 逐段轉送，串流回應（例如 /api/chat）才會即時出現在畫面上
+          if (response.body) {
+            const reader = response.body.getReader()
+            for (;;) {
+              const { done, value } = await reader.read()
+              if (done || abort.signal.aborted) break
+              res.write(value)
+            }
+          }
+          res.end()
         } catch (err) {
           next(err)
         }

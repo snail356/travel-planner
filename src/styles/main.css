@@ -267,3 +267,31 @@ footer .logo { display: block; margin: 0 0 4px; font-size: 28px; }
 .stamp.spot { width: auto; min-width: 48px; padding: 0 8px; border-radius: 99px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 12px; }
 .stamp.spot svg { width: 11px; height: 11px; }
 .stamp.spot.done svg { width: 14px; height: 14px; }
+
+/* AI 助理：串流回覆、站點標籤、建議問題 */
+.msg.error { background: var(--red-soft); color: var(--red); }
+.msg-stops { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.msg-stops button { border: 0; background: var(--blue-soft); color: var(--blue); border-radius: 99px; padding: 3px 10px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.msg-stops button:hover { background: var(--blue); color: #fff; }
+.suggestions { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-top: 4px; }
+.suggestions button { border: 1.5px solid var(--blue); background: #fff; color: var(--blue); border-radius: 99px; padding: 5px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+.suggestions button:hover { background: var(--blue); color: #fff; }
+.typing { display: inline-flex; gap: 4px; padding: 4px 0; }
+.typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: typing 1s infinite ease-in-out; }
+.typing i:nth-child(2) { animation-delay: .15s; }
+.typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes typing { 0%, 80%, 100% { opacity: .3; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+
+/* AI 標示的地圖釘選：深色外圈 + 脈衝 */
+.pin.hl, .spot-pin.hl { box-shadow: 0 0 0 3px var(--ink), 0 2px 6px rgba(27, 35, 80, .35); animation: hl-pulse 1.4s ease-out 3; }
+@keyframes hl-pulse {
+  0% { box-shadow: 0 0 0 3px var(--ink), 0 0 0 3px rgba(27, 35, 80, .45); }
+  100% { box-shadow: 0 0 0 3px var(--ink), 0 0 0 18px rgba(27, 35, 80, 0); }
+}
+@media (prefers-reduced-motion: reduce) { .pin.hl, .spot-pin.hl, .typing i { animation: none; } }
+
+/* AI 助理標題列：重新開始對話按鈕 */
+.chat-panel header .chat-title { display: flex; align-items: baseline; gap: 8px; }
+.chat-reset { border: 0; background: rgba(255, 255, 255, .18); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; font-size: 14px; flex: none; }
+.chat-reset:hover:not(:disabled) { background: rgba(255, 255, 255, .32); }
+.chat-reset:disabled { opacity: .4; cursor: default; }

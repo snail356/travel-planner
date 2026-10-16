@@ -12,6 +12,8 @@ const error = ref<string | null>(null)
 const selectedStop = ref<Stop | null>(null)
 const selectedPlace = ref<Place | null>(null)
 const activeFilter = ref<MapFilter>(0)
+/** AI 助理要求在地圖上標示的站點 */
+const highlightedStopIds = ref<number[]>([])
 
 // 每天的主色與上面文字色（黃色底需用深色字）
 export const dayColors: Record<DayNo, { bg: string; fg: string }> = {
@@ -55,8 +57,17 @@ export function useTrip() {
   }
 
   return {
-    trip, loading, error, selectedStop, selectedPlace, activeFilter,
+    trip, loading, error, selectedStop, selectedPlace, activeFilter, highlightedStopIds,
     visibleStops, visiblePlaces, foodTotal, load,
+    highlightStops(ids: number[]) {
+      // 目前分頁看不到其中某站時切回「全部」，確保標示的站點都在地圖上
+      const visible = new Set(visibleStops.value.map(s => s.id))
+      if (ids.some(id => !visible.has(id))) activeFilter.value = 0
+      highlightedStopIds.value = ids
+    },
+    clearHighlights() {
+      highlightedStopIds.value = []
+    },
     selectStop(s: Stop) {
       selectedPlace.value = null
       selectedStop.value = s

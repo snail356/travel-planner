@@ -1,52 +1,71 @@
-import type { ChatRequest, ChatResponse, Trip } from '../shared/types.js'
+import { z } from 'zod'
+import type { ChatStreamEvent } from '../shared/types.js'
 import { getTrip } from '../server/tripRepository.js'
+import { currentProvider, friendlyError, runChat } from '../server/ai/index.js'
 
-// POST /api/chat — AI 助理入口（目前為示範回覆）
-// API Key 只存在伺服器端環境變數，前端永遠拿不到。
+// 公開端點會花 API 費用，限制輸入大小
+const MAX_HISTORY = 20
+const ChatBody = z.object({
+  tripId: z.string().max(100),
+  messages: z
+    .array(z.object({ role: z.enum(['user', 'assistant']), content: z.string().trim().min(1).max(2000) }))
+    .min(1)
+    .max(100),
+  focusStopId: z.number().int().optional(),
+})
+
+// POST /api/chat — 回傳 NDJSON 串流（事件格式見 shared/types.ts 的 ChatStreamEvent）
 export async function POST(request: Request): Promise<Response> {
-  let body: ChatRequest
+  let raw: unknown
   try {
-    body = (await request.json()) as ChatRequest
+    raw = await request.json()
   } catch {
     return Response.json({ error: 'Invalid JSON' }, { status: 400 })
   }
+  const parsed = ChatBody.safeParse(raw)
+  if (!parsed.success) return Response.json({ error: 'Invalid request' }, { status: 400 })
+  const body = parsed.data
 
   const trip = await getTrip(body.tripId)
   if (!trip) return Response.json({ error: 'Trip not found' }, { status: 404 })
-  const last = body.messages.at(-1)
-  if (!last || last.role !== 'user') {
+
+  // 只保留最近幾則；對話必須以使用者開頭、以使用者的問題結尾
+  const history = body.messages.slice(-MAX_HISTORY)
+  while (history.length && history[0].role !== 'user') history.shift()
+  if (!history.length || history.at(-1)!.role !== 'user') {
     return Response.json({ error: 'Last message must be from user' }, { status: 400 })
   }
 
-  // TODO: 有 ANTHROPIC_API_KEY 時改為呼叫 LLM：
-  //   system = buildSystemPrompt(trip, body.focusStopId)
-  //   messages = body.messages
-  //   之後可再加 tool use（查站點、調整行程、標示地圖）
-  const res: ChatResponse = {
-    reply: mockReply(trip, last.content, body.focusStopId),
-    mock: true,
-  }
-  return Response.json(res)
-}
+  const encoder = new TextEncoder()
+  const stream = new ReadableStream<Uint8Array>({
+    async start(controller) {
+      const emit = (event: ChatStreamEvent) => {
+        try {
+          controller.enqueue(encoder.encode(`${JSON.stringify(event)}\n`))
+        } catch {
+          // 使用者已離開，忽略
+        }
+      }
+      const provider = currentProvider()
+      try {
+        await runChat({ provider, trip, history, focusStopId: body.focusStopId, signal: request.signal, emit })
+        emit({ type: 'done', mock: provider === 'mock' })
+      } catch (err) {
+        if (!request.signal.aborted) emit({ type: 'error', message: await friendlyError(provider, err) })
+      } finally {
+        try {
+          controller.close()
+        } catch {
+          // 已關閉
+        }
+      }
+    },
+  })
 
-/** 把行程資料整理成 AI 的背景知識 */
-export function buildSystemPrompt(trip: Trip, focusStopId?: number): string {
-  const stops = trip.stops
-    .map(s => `- [${s.id}] Day${s.day} ${s.name}（${s.type === 'food' ? '餐廳' : '景點'}，${s.area}${s.price ? `，NT$${s.price}` : ''}）${s.desc}`)
-    .join('\n')
-  const focus = trip.stops.find(s => s.id === focusStopId)
-  return [
-    `你是「${trip.title}」的旅遊助理，用繁體中文回答，根據下列行程資料回覆。`,
-    `住宿：${trip.hotel.name}（${trip.hotel.nights} 晚）`,
-    `固定地點：\n${trip.places.map(p => `- ${p.name}（${p.area}）${p.desc}`).join('\n')}`,
-    `站點：\n${stops}`,
-    focus ? `使用者目前正在看：${focus.name}` : '',
-  ].filter(Boolean).join('\n\n')
-}
-
-function mockReply(trip: Trip, question: string, focusStopId?: number): string {
-  const focus = trip.stops.find(s => s.id === focusStopId)
-  const hit = trip.stops.find(s => question.includes(s.name)) ?? focus
-  if (hit) return `（示範回覆）${hit.name}：${hit.desc} 位於 ${hit.area}，安排在 Day ${hit.day}。`
-  return `（示範回覆）AI 助理尚未串接。這趟「${trip.title}」共 ${trip.stops.length} 站，你可以問我某個站點的資訊。`
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'application/x-ndjson; charset=utf-8',
+      'Cache-Control': 'no-cache, no-transform',
+    },
+  })
 }

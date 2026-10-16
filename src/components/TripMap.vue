@@ -28,7 +28,9 @@ const TILES: Record<MapStyle, { url: string; attribution?: string }[]> = {
 const CHECK_SVG = faIcon(faCheck).html.join('')
 const CAMERA_SVG = faIcon(navItems.spots.icon).html.join('')
 
-const { trip, visibleStops, selectedStop, selectedPlace, activeFilter, selectStop, selectPlace } = useTrip()
+const {
+  trip, visibleStops, selectedStop, selectedPlace, activeFilter, highlightedStopIds, selectStop, selectPlace,
+} = useTrip()
 const { checked, isChecked } = useCurrentCheckins()
 const el = ref<HTMLDivElement>()
 const mapStyle = ref<MapStyle>('simple')
@@ -52,24 +54,27 @@ function applyTiles() {
 function renderMarkers() {
   if (!map) return
   markerLayer.clearLayers()
+  const highlighted = new Set(highlightedStopIds.value)
   for (const s of visibleStops.value) {
     const { bg, fg } = dayColors[s.day]
     const done = isChecked(s.id) ? `<i class="pin-done">${CHECK_SVG}</i>` : ''
+    // AI 標示的站點加上脈衝光圈
+    const hl = highlighted.has(s.id) ? ' hl' : ''
     // 餐廳：水滴；景點：相機圖示膠囊（寬度不固定，用 0 尺寸錨點 + CSS 置中，尖端對準位置）
     const icon = s.type === 'spot'
       ? L.divIcon({
           className: '',
           iconSize: [0, 0],
           iconAnchor: [0, 0],
-          html: `<div class="spot-pin" style="--c:${bg};color:${fg}">${CAMERA_SVG}<span>${s.id}</span>${done}</div>`,
+          html: `<div class="spot-pin${hl}" style="--c:${bg};color:${fg}">${CAMERA_SVG}<span>${s.id}</span>${done}</div>`,
         })
       : L.divIcon({
           className: '',
           iconSize: [30, 30],
           iconAnchor: [15, 30],
-          html: `<div class="pin" style="background:${bg};color:${fg}"><span>${s.id}</span>${done}</div>`,
+          html: `<div class="pin${hl}" style="background:${bg};color:${fg}"><span>${s.id}</span>${done}</div>`,
         })
-    L.marker([s.lat, s.lng], { icon })
+    L.marker([s.lat, s.lng], { icon, zIndexOffset: hl ? 1000 : 0 })
       .bindTooltip(`${s.id}. ${s.name}`)
       .on('click', () => selectStop(s))
       .addTo(markerLayer)
@@ -203,6 +208,18 @@ watch(selectedPlace, p => {
 })
 // 打卡只更新釘選樣式，不移動地圖
 watch(checked, renderMarkers)
+// AI 標示站點：重畫光圈並縮放到這些站點（在切換分頁的對焦之後執行，才不會被蓋掉）
+watch(highlightedStopIds, ids => {
+  renderMarkers()
+  const points = (trip.value?.stops ?? []).filter(s => ids.includes(s.id)).map(s => L.latLng(s.lat, s.lng))
+  if (!map || !points.length) return
+  map.fitBounds(L.latLngBounds(points), {
+    animate: false,
+    paddingTopLeft: [40, 80],
+    paddingBottomRight: [40, 30],
+    maxZoom: 16,
+  })
+})
 watch(mapStyle, applyTiles)
 watch(showRoutes, renderRoutes)
 watch(selectedStop, s => {

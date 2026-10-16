@@ -100,9 +100,17 @@ export interface ChatRequest {
   focusStopId?: number
 }
 
-export interface ChatResponse {
-  reply: string
-  /** AI 建議在地圖上標示的站點 id（之後可用來聯動地圖） */
-  highlightStopIds?: number[]
-  mock?: boolean
-}
+/**
+ * /api/chat 以串流回傳，每行一個 JSON（NDJSON）：
+ * - text：回覆文字片段，依序接起來就是完整回覆
+ * - reset：清除目前已顯示的回覆文字（例如呼叫工具前的過場說明）
+ * - highlight：AI 要在地圖上標示的站點
+ * - done：回覆結束（mock 表示 AI 尚未串接，為示範回覆）
+ * - error：發生錯誤，message 可直接顯示給使用者
+ */
+export type ChatStreamEvent =
+  | { type: 'text'; delta: string }
+  | { type: 'reset' }
+  | { type: 'highlight'; stopIds: number[] }
+  | { type: 'done'; mock?: boolean }
+  | { type: 'error'; message: string }
