@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faArrowUpRightFromSquare, faCircleCheck, faLocationDot, faStamp, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { dayStyle, placeLabels, useTrip } from '../composables/useTrip'
 import { useCurrentCheckins } from '../composables/useCheckins'
-import { guideIcons, placeIcons } from '../icons'
+import { placeIcons } from '../icons'
 import StopPhoto from './StopPhoto.vue'
 
 const { selectedStop: s, selectedPlace: p, selectedGuide: g, closeDetail, slotOf } = useTrip()
@@ -113,7 +113,6 @@ const mapsUrl = (name: string) =>
     </template>
     <!-- 行前須知完整說明 -->
     <template v-else-if="g">
-      <div class="img placeholder place-hero"><FontAwesomeIcon :icon="guideIcons[g.icon]" /></div>
       <div class="body">
         <p><span class="tag tag-ink">行前須知</span></p>
         <h2>{{ g.title }}</h2>
