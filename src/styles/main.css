@@ -347,3 +347,15 @@ footer .logo { display: block; margin: 0 0 4px; font-size: 28px; }
   .chat-fab { animation: none; }
   .chat-fab:hover { transform: none; }
 }
+
+/* 行程列表：天數標題、時段標題、收尾說明 */
+.stops li.day-header, .stops li.slot-header { cursor: default; background: none; }
+.stops li.day-header:hover, .stops li.slot-header:hover { background: none; }
+.stops li.day-header { gap: 8px; padding: 14px 10px 4px; align-items: center; flex-wrap: wrap; }
+.stops li.day-header:first-child { padding-top: 6px; }
+.day-badge { font-family: var(--display); font-weight: 700; font-size: 12px; padding: 2px 10px; border-radius: 99px; }
+.day-title { font-weight: 900; font-size: 14px; color: var(--ink); }
+.stops li.slot-header { padding: 8px 10px 2px 14px; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
+.stops li.end-row .t { font-size: 14px; color: var(--muted); }
+.detail-note { background: var(--blue-soft); color: var(--blue); border-radius: 10px; padding: 8px 12px; font-size: 14px; font-weight: 700; }
+.day-theme { margin: -6px 0 14px; font-weight: 900; color: var(--ink); }

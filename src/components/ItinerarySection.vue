@@ -6,7 +6,7 @@ import { placeIcons } from '../icons'
 import StopList from './StopList.vue'
 import TripMap from './TripMap.vue'
 
-const { activeFilter } = useTrip()
+const { activeFilter, dayPlanOf } = useTrip()
 const tabs: { value: MapFilter; label: string; icon?: IconDefinition }[] = [
   { value: 0, label: '全部' },
   { value: 1, label: 'Day 1' },
@@ -37,6 +37,9 @@ function pick(value: MapFilter, e: MouseEvent) {
           @click="pick(t.value, $event)"
         ><FontAwesomeIcon v-if="t.icon" :icon="t.icon" /> {{ t.label }}</button>
       </div>
+      <p v-if="typeof activeFilter === 'number' && activeFilter > 0" class="day-theme">
+        {{ dayPlanOf(activeFilter)?.title }}
+      </p>
       <div class="plan">
         <StopList />
         <TripMap />

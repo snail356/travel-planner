@@ -81,14 +81,13 @@ function renderMarkers() {
   }
 }
 
-// 依站序把同一天的站點連起來（直線示意，非實際路徑）
+// 依動線順序把同一天的站點連起來（直線示意，非實際路徑；visibleStops 已依動線排序）
 function renderRoutes() {
   routeLayer.clearLayers()
   if (!showRoutes.value) return
   for (const day of [1, 2, 3] as DayNo[]) {
     const points = visibleStops.value
       .filter(s => s.day === day)
-      .sort((a, b) => a.id - b.id)
       .map(s => L.latLng(s.lat, s.lng))
     if (points.length < 2) continue
     // 白色外框讓黃色線在淺色底圖上也看得清楚

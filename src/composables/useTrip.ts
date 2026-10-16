@@ -27,11 +27,30 @@ export const placeLabels: Record<PlaceKind, string> = { hotel: '住宿', airport
 
 const isPlaceFilter = (f: MapFilter): f is PlaceKind => typeof f === 'string'
 
+/** 依動線（dayPlans）算出每站的造訪順序與所屬時段 */
+const planInfo = computed(() => {
+  const info = new Map<number, { order: number; slot: string }>()
+  let order = 0
+  for (const plan of trip.value?.dayPlans ?? []) {
+    for (const slot of plan.slots) {
+      for (const id of slot.stopIds) info.set(id, { order: order++, slot: slot.label })
+    }
+  }
+  return info
+})
+/** 全部站點，依動線順序排列（站號不一定連續） */
+const orderedStops = computed(() => {
+  const info = planInfo.value
+  return [...(trip.value?.stops ?? [])].sort(
+    (a, b) => (info.get(a.id)?.order ?? Infinity) - (info.get(b.id)?.order ?? Infinity),
+  )
+})
+
 export function useTrip() {
   const visibleStops = computed(() => {
     const f = activeFilter.value
     if (isPlaceFilter(f)) return []
-    return (trip.value?.stops ?? []).filter(s => !f || s.day === f)
+    return orderedStops.value.filter(s => !f || s.day === f)
   })
   /** 列表要顯示的固定地點：全部 → 全部地點；地點分頁 → 該類地點；某天 → 無 */
   const visiblePlaces = computed(() => {
@@ -58,7 +77,10 @@ export function useTrip() {
 
   return {
     trip, loading, error, selectedStop, selectedPlace, activeFilter, highlightedStopIds,
-    visibleStops, visiblePlaces, foodTotal, load,
+    orderedStops, visibleStops, visiblePlaces, foodTotal, load,
+    /** 站點所屬的時段，例如「上午／午餐」 */
+    slotOf: (id: number) => planInfo.value.get(id)?.slot,
+    dayPlanOf: (day: number) => trip.value?.dayPlans.find(p => p.day === day),
     highlightStops(ids: number[]) {
       // 目前分頁看不到其中某站時切回「全部」，確保標示的站點都在地圖上
       const visible = new Set(visibleStops.value.map(s => s.id))

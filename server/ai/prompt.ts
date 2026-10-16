@@ -14,13 +14,22 @@ export const RULES = `你是「旅行規劃」網站的行程助理，協助使�
 
 /** 行程資料整理成文字（同一份行程內容固定，可快取） */
 export function buildTripContext(trip: Trip): string {
-  const stops = trip.stops
-    .map(s => {
-      const kind = s.type === 'food' ? '餐廳' : '景點'
-      const price = s.price ? `，花費 NT$${s.price}` : ''
-      const pass = s.pass ? '，FunPASS 可用' : ''
-      return `- [${s.id}] Day ${s.day}｜${s.name}（${kind}，${s.area}${price}${pass}）${s.desc}`
-    })
+  const stopLine = (id: number) => {
+    const s = trip.stops.find(x => x.id === id)
+    if (!s) return ''
+    const kind = s.type === 'food' ? '餐廳' : '景點'
+    const price = s.price ? `，花費 NT$${s.price}` : ''
+    const pass = s.pass ? '，FunPASS 可用' : ''
+    const note = s.note ? `（備註：${s.note}）` : ''
+    return `    - [${s.id}] ${s.name}（${kind}，${s.area}${price}${pass}）${s.desc}${note}`
+  }
+  // 依動線列出：天 → 時段 → 依序造訪的站點
+  const stops = trip.dayPlans
+    .map(plan => [
+      `Day ${plan.day}｜${plan.title}`,
+      ...plan.slots.flatMap(slot => [`  ${slot.label}`, ...slot.stopIds.map(stopLine)]),
+      ...(plan.endNote ? [`  ${plan.endNote}`] : []),
+    ].join('\n'))
     .join('\n')
   const places = trip.places.map(p => `- ${p.name}（${p.area}）${p.desc}`).join('\n')
   const transports = trip.transports
@@ -35,7 +44,7 @@ export function buildTripContext(trip: Trip): string {
 說明：${trip.subtitle}
 平均每人花費：NT$${trip.avgCostPerPerson.toLocaleString()}
 
-站點（[編號] 天數｜名稱）：
+行程動線（依天數與時段，站點依造訪順序；[編號] 是站號，不代表順序）：
 ${stops}
 
 住宿與機場：

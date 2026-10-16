@@ -11,7 +11,7 @@ import CostSection from './components/CostSection.vue'
 import DetailPanel from './components/DetailPanel.vue'
 import ChatWidget from './components/ChatWidget.vue'
 
-const { trip, loading, error, load } = useTrip()
+const { trip, orderedStops, loading, error, load } = useTrip()
 onMounted(() => load())
 </script>
 
@@ -27,14 +27,14 @@ onMounted(() => load())
       eyebrow="EAT & DRINK"
       title="餐廳美食"
       sub="點心、茶餐廳、甜點、伴手禮"
-      :stops="trip.stops.filter(s => s.type === 'food')"
+      :stops="orderedStops.filter(s => s.type === 'food')"
     />
     <StopCardGrid
       id="spots"
       eyebrow="SIGHTSEEING"
       title="景點"
       sub="付費景點皆使用香港 FunPASS（豪華 3 合 1）"
-      :stops="trip.stops.filter(s => s.type === 'spot')"
+      :stops="orderedStops.filter(s => s.type === 'spot')"
     />
     <HotelSection :hotel="trip.hotel" />
     <TransportSection :transports="trip.transports" />

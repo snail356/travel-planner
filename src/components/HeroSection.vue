@@ -2,12 +2,14 @@
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCheck, faTrophy } from '@fortawesome/free-solid-svg-icons'
 import type { DayNo, Trip } from '../../shared/types'
-import { dayColors } from '../composables/useTrip'
+import { dayColors, useTrip } from '../composables/useTrip'
 import { useCurrentCheckins } from '../composables/useCheckins'
 import { navItems } from '../navItems'
 
 defineProps<{ trip: Trip }>()
 const { count, isChecked, toggle, reset } = useCurrentCheckins()
+// 打卡圓圈依動線順序排列，同一天的顏色排在一起
+const { orderedStops } = useTrip()
 
 // 未打卡：空心；已打卡：當天顏色實心（景點為相機膠囊，餐廳為圓圈）
 const stampStyle = (day: DayNo, done: boolean) =>
@@ -38,7 +40,7 @@ const stampStyle = (day: DayNo, done: boolean) =>
         </div>
         <div class="stamps">
           <button
-            v-for="s in trip.stops"
+            v-for="s in orderedStops"
             :key="s.id"
             class="stamp"
             :class="{ done: isChecked(s.id), spot: s.type === 'spot' }"

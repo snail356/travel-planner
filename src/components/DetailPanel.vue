@@ -7,7 +7,7 @@ import { useCurrentCheckins } from '../composables/useCheckins'
 import { placeIcons } from '../icons'
 import StopPhoto from './StopPhoto.vue'
 
-const { selectedStop: s, selectedPlace: p, closeDetail } = useTrip()
+const { selectedStop: s, selectedPlace: p, closeDetail, slotOf } = useTrip()
 const { isChecked, toggle } = useCurrentCheckins()
 
 // 點面板以外的地方自動收回
@@ -66,12 +66,14 @@ const mapsUrl = (name: string) =>
       <div class="body">
         <p>
           <span class="tag" :style="dayStyle(s.day)">Day {{ s.day }}</span>
+          <span v-if="slotOf(s.id)" class="tag">{{ slotOf(s.id) }}</span>
           <span class="tag">第 {{ s.id }} 站</span>
           <span class="tag">{{ s.type === 'food' ? '餐廳' : '景點' }}</span>
           <span v-if="s.pass" class="tag">FunPASS</span>
         </p>
         <h2>{{ s.name }}</h2>
         <p>{{ s.desc }}</p>
+        <p v-if="s.note" class="detail-note">{{ s.note }}</p>
         <div class="info">
           <p><b>區域</b>{{ s.area }}</p>
           <p v-if="s.price"><b>花費</b>NT${{ s.price }}</p>

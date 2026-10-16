@@ -21,6 +21,22 @@ export interface Stop {
   imageUrl?: string
   /** 使用他人授權照片時的標示（例如 CC BY-SA 需註明作者與授權） */
   imageCredit?: ImageCredit
+  /** 行程備註，例如「搭船跨海至尖沙咀」 */
+  note?: string
+}
+
+/** 一天中的一個時段（例如「上午／午餐」），stopIds 為造訪順序 */
+export interface DaySlot {
+  label: string
+  stopIds: number[]
+}
+
+/** 每天的動線安排：主題、依序的時段，以及收尾說明（例如前往機場） */
+export interface DayPlan {
+  day: DayNo
+  title: string
+  slots: DaySlot[]
+  endNote?: string
 }
 
 export interface ImageCredit {
@@ -84,6 +100,8 @@ export interface Trip {
   costs: CostItem[]
   stops: Stop[]
   places: Place[]
+  /** 動線：站點的天數與順序以這裡為準 */
+  dayPlans: DayPlan[]
 }
 
 // ---- AI 助理 ----
