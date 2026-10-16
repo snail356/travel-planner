@@ -197,13 +197,14 @@ footer .logo { display: block; margin: 0 0 4px; font-size: 28px; }
   .card .t { font-size: 15px; }
 
   .topnav a.link { display: none; }
-  .tabbar { display: flex; position: fixed; left: 12px; right: 12px; bottom: calc(10px + var(--safe-b)); z-index: 1900; background: var(--blue); border-radius: 99px; padding: 7px 4px; justify-content: space-around; box-shadow: 0 8px 24px rgba(36, 73, 194, .35); }
+  /* 貼齊螢幕底部，iPhone Home 指示條區域用同色延伸，不會看起來懸浮 */
+  .tabbar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 1900; background: var(--blue); border-radius: 22px 22px 0 0; padding: 8px 4px calc(8px + var(--safe-b)); justify-content: space-around; box-shadow: 0 -4px 20px rgba(36, 73, 194, .25); }
   .tabbar a { text-decoration: none; color: #fff; display: grid; justify-items: center; font-size: 11px; font-weight: 500; min-width: 48px; }
   .tabbar a span { width: 34px; height: 34px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-size: 15px; color: var(--blue); }
-  footer { padding-bottom: calc(110px + var(--safe-b)); }
+  footer { padding-bottom: calc(var(--tabbar-h) + 40px + var(--safe-b)); }
 
-  .chat-fab { --fab-size: 52px; right: 14px; bottom: calc(var(--tabbar-h) + 22px + var(--safe-b)); }
-  .chat-panel { left: 12px; right: 12px; width: auto; bottom: calc(var(--tabbar-h) + 84px + var(--safe-b)); height: min(440px, 60dvh); }
+  .chat-fab { --fab-size: 52px; right: 14px; bottom: calc(var(--tabbar-h) + 14px + var(--safe-b)); }
+  .chat-panel { left: 12px; right: 12px; width: auto; bottom: calc(var(--tabbar-h) + 76px + var(--safe-b)); height: min(440px, 60dvh); }
 
   /* 詳情改成底部抽屜，上方地圖仍看得到定位 */
   .detail { top: auto; left: 0; right: 0; width: 100%; max-height: 58dvh; border-radius: 24px 24px 0 0; transform: translateY(105%); z-index: 2200; padding-bottom: var(--safe-b); box-shadow: 0 -8px 30px rgba(27, 35, 80, .2); }
