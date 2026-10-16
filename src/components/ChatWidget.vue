@@ -311,16 +311,27 @@ function openStop(stop: Stop) {
           Trip Buddy
           <small>AI 行程助理<template v-if="mock">・示範回覆</template></small>
         </span>
-        <button
-          type="button"
-          class="chat-reset"
-          title="重新開始對話"
-          aria-label="重新開始對話"
-          :disabled="messages.length === 1 && !sending"
-          @click="resetChat"
-        >
-          <FontAwesomeIcon :icon="faRotateRight" />
-        </button>
+        <span class="chat-actions">
+          <button
+            type="button"
+            class="chat-reset"
+            title="重新開始對話"
+            aria-label="重新開始對話"
+            :disabled="messages.length === 1 && !sending"
+            @click="resetChat"
+          >
+            <FontAwesomeIcon :icon="faRotateRight" />
+          </button>
+          <button
+            type="button"
+            class="chat-reset"
+            title="關閉"
+            aria-label="關閉 AI 行程助理"
+            @click="open = false"
+          >
+            <FontAwesomeIcon :icon="faXmark" />
+          </button>
+        </span>
       </header>
       <div ref="log" class="chat-log" aria-live="polite">
         <div
