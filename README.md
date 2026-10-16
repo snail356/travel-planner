@@ -80,6 +80,12 @@ Hongkong.html        原始 HTML 雛形（參考用）
 | `shared/types.ts` | 串流事件 `ChatStreamEvent`：`text` / `highlight` / `done` / `error` |
 | `src/components/ChatWidget.vue` | 對話框、建議問題、站點標籤（點了打開詳情） |
 
+**網路搜尋**（預設開啟，`AGENT_WEB_SEARCH=off` 可關閉）
+
+- 只在問行程中店家／景點的推薦菜色、營業時間、最新消息等行程資料沒有的公開資訊時才搜尋；回答中以「外部資訊：…（來源：網站名稱）」和行程資料分開。
+- Cursor 版使用 Cursor 內建的 `webSearch`（@cursor/sdk 1.0.35 不會回報搜尋事件，畫面無法顯示「搜尋中」）；Claude 版使用伺服器端 `web_search`，每題最多搜尋 3 次。
+- 會多用額度，回覆也會慢 5～15 秒。
+
 **Cursor 版的設計**
 
 - 伺服器不保存對話狀態：每次提問建立一個暫時的 agent，把規則、行程資料、先前對話一起送出，回答完即關閉，所以也能跑在 Vercel 的無狀態函式。

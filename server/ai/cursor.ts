@@ -1,9 +1,9 @@
 import { mkdirSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import type { SDKCustomTool } from '@cursor/sdk'
+import type { SDKCustomTool, ToolName } from '@cursor/sdk'
 import type { ChatRunOptions } from './types.js'
-import { HIGHLIGHT_TOOL, RULES, buildTripContext, focusNote, resolveHighlight, transcript } from './prompt.js'
+import { HIGHLIGHT_TOOL, buildRules, buildTripContext, focusNote, resolveHighlight, transcript, webSearchEnabled } from './prompt.js'
 
 // Cursor SDK 版：agent 迴圈由 Cursor 執行，用量算在 Cursor 方案
 // 參考 demo 專案的 ai-service/agent/cursor-agent.ts
@@ -32,7 +32,7 @@ function composePrompt({ trip, history, focusStopId }: ChatRunOptions): string {
   const focus = focusNote(trip, focusStopId)
   return [
     `<instructions>
-${RULES}
+${buildRules()}
 - 你在網站後端回答訪客問題：不要讀寫檔案、不要執行指令，也不要提到程式或工具本身，直接回答。
 - 需要標示站點時，先呼叫 highlight_stops，再開始寫回答；呼叫工具前不要輸出任何文字。
 </instructions>`,
@@ -69,8 +69,9 @@ export async function runCursorChat(opts: ChatRunOptions): Promise<void> {
     apiKey: process.env.CURSOR_API_KEY,
     model: { id: MODEL },
     name: 'travel-planner chat',
-    // 只開放自訂工具（屬於 mcp 家族）；改檔、shell、讀檔等內建工具一律關閉
-    tools: ['mcp'],
+    // 只開放自訂工具（屬於 mcp 家族）與網路搜尋；改檔、shell、讀檔等內建工具一律關閉。
+    // 網路搜尋由 Cursor 直接執行，只能靠規則約束用法（@cursor/sdk 1.0.35 不會在事件中回報搜尋）
+    tools: ['mcp', ...(webSearchEnabled() ? (['webSearch'] as ToolName[]) : [])],
     local: {
       cwd: workspace,
       // 不載入本機的 Cursor 規則、設定與 MCP 伺服器

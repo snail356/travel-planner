@@ -2,8 +2,8 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faChevronRight, faRightLeft } from '@fortawesome/free-solid-svg-icons'
-import type { ExchangeRate, Guide } from '../../shared/types'
-import { fetchRate } from '../services/api'
+import type { Guide } from '../../shared/types'
+import { useExchangeRate } from '../composables/useExchangeRate'
 import { useTrip } from '../composables/useTrip'
 import { guideIcons } from '../icons'
 
@@ -18,8 +18,8 @@ const QUICK_AMOUNTS = [
   { label: 'HK$500', hkd: 500 },
 ]
 
-const info = ref<ExchangeRate | null>(null)
-const loadError = ref(false)
+// 參考匯率與 AI 助理共用（整個頁面只抓一次）
+const { info, loadError, updatedLabel, load } = useExchangeRate()
 /** 使用者自訂匯率（例如自己銀行的牌告匯率），空白時用參考匯率 */
 const customRate = ref('')
 const hkd = ref('100')
@@ -29,11 +29,6 @@ const lastEdited = ref<'hkd' | 'twd'>('hkd')
 const rate = computed(() => {
   const custom = Number.parseFloat(customRate.value)
   return custom > 0 ? custom : info.value?.rate ?? null
-})
-const updatedLabel = computed(() => {
-  if (!info.value) return ''
-  const d = new Date(info.value.updatedAt)
-  return `${d.getMonth() + 1}/${d.getDate()} 更新`
 })
 
 const toNumber = (v: string) => {
@@ -67,13 +62,7 @@ function pick(amount: number) {
 }
 
 watch(rate, recalc)
-onMounted(async () => {
-  try {
-    info.value = await fetchRate()
-  } catch {
-    loadError.value = true
-  }
-})
+onMounted(load)
 </script>
 
 <template>

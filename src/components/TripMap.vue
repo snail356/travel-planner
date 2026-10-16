@@ -51,15 +51,21 @@ function applyTiles() {
   }
 }
 
+/** 下一次重畫釘選時是否播放 AI 標示的脈衝 */
+let pulseOnNextRender = false
+
 function renderMarkers() {
   if (!map) return
   markerLayer.clearLayers()
   const highlighted = new Set(highlightedStopIds.value)
+  // 脈衝只在 AI 剛標示時播一次；之後切換分頁、打卡重畫釘選時只保留外圈
+  const pulse = pulseOnNextRender
+  pulseOnNextRender = false
   for (const s of visibleStops.value) {
     const { bg, fg } = dayColors[s.day]
     const done = isChecked(s.id) ? `<i class="pin-done">${CHECK_SVG}</i>` : ''
     // AI 標示的站點加上脈衝光圈
-    const hl = highlighted.has(s.id) ? ' hl' : ''
+    const hl = highlighted.has(s.id) ? (pulse ? ' hl hl-pulse' : ' hl') : ''
     // 餐廳：水滴；景點：相機圖示膠囊（寬度不固定，用 0 尺寸錨點 + CSS 置中，尖端對準位置）
     const icon = s.type === 'spot'
       ? L.divIcon({
@@ -209,6 +215,7 @@ watch(selectedPlace, p => {
 watch(checked, renderMarkers)
 // AI 標示站點：重畫光圈並縮放到這些站點（在切換分頁的對焦之後執行，才不會被蓋掉）
 watch(highlightedStopIds, ids => {
+  pulseOnNextRender = ids.length > 0
   renderMarkers()
   const points = (trip.value?.stops ?? []).filter(s => ids.includes(s.id)).map(s => L.latLng(s.lat, s.lng))
   if (!map || !points.length) return

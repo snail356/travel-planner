@@ -273,9 +273,6 @@ footer .logo { display: block; margin: 0 0 4px; font-size: 28px; }
 .msg-stops { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .msg-stops button { border: 0; background: var(--blue-soft); color: var(--blue); border-radius: 99px; padding: 3px 10px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
 .msg-stops button:hover { background: var(--blue); color: #fff; }
-.suggestions { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-top: 4px; }
-.suggestions button { border: 1.5px solid var(--blue); background: #fff; color: var(--blue); border-radius: 99px; padding: 5px 12px; font: inherit; font-size: 13px; cursor: pointer; }
-.suggestions button:hover { background: var(--blue); color: #fff; }
 .typing { display: inline-flex; gap: 4px; padding: 4px 0; }
 .typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: typing 1s infinite ease-in-out; }
 .typing i:nth-child(2) { animation-delay: .15s; }
@@ -283,12 +280,13 @@ footer .logo { display: block; margin: 0 0 4px; font-size: 28px; }
 @keyframes typing { 0%, 80%, 100% { opacity: .3; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
 
 /* AI 標示的地圖釘選：深色外圈 + 脈衝 */
-.pin.hl, .spot-pin.hl { box-shadow: 0 0 0 3px var(--ink), 0 2px 6px rgba(27, 35, 80, .35); animation: hl-pulse 1.4s ease-out 3; }
+.pin.hl, .spot-pin.hl { box-shadow: 0 0 0 3px var(--ink), 0 2px 6px rgba(27, 35, 80, .35); }
+.pin.hl-pulse, .spot-pin.hl-pulse { animation: hl-pulse 1.4s ease-out 3; }
 @keyframes hl-pulse {
   0% { box-shadow: 0 0 0 3px var(--ink), 0 0 0 3px rgba(27, 35, 80, .45); }
   100% { box-shadow: 0 0 0 3px var(--ink), 0 0 0 18px rgba(27, 35, 80, 0); }
 }
-@media (prefers-reduced-motion: reduce) { .pin.hl, .spot-pin.hl, .typing i { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .pin.hl-pulse, .spot-pin.hl-pulse, .typing i { animation: none; } }
 
 /* AI 助理標題列：重新開始對話按鈕 */
 .chat-panel header .chat-title { display: flex; align-items: baseline; gap: 8px; }
@@ -314,15 +312,12 @@ footer .logo { display: block; margin: 0 0 4px; font-size: 28px; }
 
 /* 訊息與建議問題：滑入淡入 */
 .chat-log .msg { animation: msg-in .24s ease-out both; }
-.suggestions button { animation: msg-in .3s ease-out both; }
-.suggestions button:nth-child(2) { animation-delay: .06s; }
-.suggestions button:nth-child(3) { animation-delay: .12s; }
 @keyframes msg-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   .chat-pop-enter-active, .chat-pop-leave-active, .icon-swap-enter-active, .icon-swap-leave-active { transition: opacity .1s; }
   .chat-pop-enter-from, .chat-pop-leave-to, .icon-swap-enter-from, .icon-swap-leave-to { transform: none; }
-  .chat-log .msg, .suggestions button { animation: none; }
+  .chat-log .msg { animation: none; }
 }
 
 /* AI 按鈕：系統藍實心圓＋白色機器人 */
@@ -400,3 +395,20 @@ footer .logo { display: block; margin: 0 0 4px; font-size: 28px; }
 .conv-credit { font-size: 11px; color: var(--muted); }
 .conv-foot .guide-more { margin-top: 0; border: 0; background: none; font: inherit; font-size: 13px; font-weight: 700; color: var(--blue); cursor: pointer; padding: 0; }
 .conv-field input::-webkit-outer-spin-button, .conv-field input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* AI 助理：常駐快捷問題（可左右滑動） */
+.chat-quick { display: flex; gap: 6px; overflow-x: auto; padding: 8px 10px 0; background: var(--card); scrollbar-width: none; }
+.chat-quick::-webkit-scrollbar { display: none; }
+.chat-quick button { flex: none; white-space: nowrap; border: 1.5px solid var(--blue); background: #fff; color: var(--blue); border-radius: 99px; padding: 4px 12px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.chat-quick button:hover:not(:disabled) { background: var(--blue); color: #fff; }
+.chat-quick button.local { background: var(--blue-soft); }
+.chat-quick button:disabled { opacity: .5; cursor: default; }
+
+/* AI 助理：餐廳選擇 */
+.msg-choices { display: grid; gap: 8px; margin-top: 10px; }
+.choice-day { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.choice-day-label { font-family: var(--display); font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 99px; }
+.msg-choices button { border: 1.5px solid var(--blue); background: #fff; color: var(--blue); border-radius: 99px; padding: 3px 10px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.msg-choices button:hover:not(:disabled) { background: var(--blue); color: #fff; }
+.msg-choices button:disabled { opacity: .45; cursor: default; }
+.msg-choices button.picked { opacity: 1; background: var(--blue); color: #fff; }

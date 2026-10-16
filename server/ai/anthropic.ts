@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 import type { ChatRunOptions } from './types.js'
-import { HIGHLIGHT_TOOL, RULES, buildTripContext, focusNote, resolveHighlight } from './prompt.js'
+import { HIGHLIGHT_TOOL, buildRules, buildTripContext, focusNote, resolveHighlight, webSearchEnabled } from './prompt.js'
 
 // Claude API 版：自己控制工具迴圈，回覆逐字串流
 const MODEL = process.env.ANTHROPIC_MODEL || 'claude-opus-5-5'
@@ -13,20 +13,21 @@ const MAX_ROUNDS = 4
 let client: Anthropic | undefined
 const getClient = () => (client ??= new Anthropic())
 
-const TOOLS: Anthropic.Beta.BetaTool[] = [
-  {
-    name: HIGHLIGHT_TOOL.name,
-    description: HIGHLIGHT_TOOL.description,
-    eager_input_streaming: true,
-    input_schema: {
-      type: 'object',
-      properties: {
-        stop_ids: { type: 'array', items: { type: 'integer' }, description: '站點編號，例如 [1, 6]' },
-      },
-      required: ['stop_ids'],
+const HIGHLIGHT: Anthropic.Beta.BetaTool = {
+  name: HIGHLIGHT_TOOL.name,
+  description: HIGHLIGHT_TOOL.description,
+  eager_input_streaming: true,
+  input_schema: {
+    type: 'object',
+    properties: {
+      stop_ids: { type: 'array', items: { type: 'integer' }, description: '站點編號，例如 [1, 6]' },
     },
+    required: ['stop_ids'],
   },
-]
+}
+// 伺服器端網路搜尋（由 Anthropic 執行），每個問題最多搜尋 3 次控制費用
+const WEB_SEARCH: Anthropic.Beta.BetaWebSearchTool20260209 = { type: 'web_search_20260209', name: 'web_search', max_uses: 3 }
+const tools = (): Anthropic.Beta.BetaToolUnion[] => (webSearchEnabled() ? [HIGHLIGHT, WEB_SEARCH] : [HIGHLIGHT])
 
 export async function runAnthropicChat({ trip, history, focusStopId, signal, emit }: ChatRunOptions): Promise<void> {
   const messages: Anthropic.Beta.BetaMessageParam[] = history.map(m => ({ role: m.role, content: m.content }))
@@ -35,7 +36,7 @@ export async function runAnthropicChat({ trip, history, focusStopId, signal, emi
   if (focus) messages.push({ role: 'system', content: focus })
 
   const system: Anthropic.Beta.BetaTextBlockParam[] = [
-    { type: 'text', text: RULES },
+    { type: 'text', text: buildRules() },
     { type: 'text', text: buildTripContext(trip), cache_control: { type: 'ephemeral' } },
   ]
 
@@ -50,7 +51,7 @@ export async function runAnthropicChat({ trip, history, focusStopId, signal, emi
         betas: ['server-side-fallback-2026-07-01'],
         fallbacks: 'default',
         system,
-        tools: TOOLS,
+        tools: tools(),
         messages,
       },
       { signal },
@@ -80,6 +81,11 @@ export async function runAnthropicChat({ trip, history, focusStopId, signal, emi
     const toolUses = message.content.filter(
       (b): b is Anthropic.Beta.BetaToolUseBlock => b.type === 'tool_use',
     )
+    // 伺服器端工具（網路搜尋）跑到一半暫停：原樣接上回覆再送出，讓它繼續
+    if (message.stop_reason === 'pause_turn') {
+      messages.push({ role: 'assistant', content: message.content })
+      continue
+    }
     // 沒有要呼叫工具（或輸出被截斷）就結束
     if (message.stop_reason !== 'tool_use' || toolUses.length === 0) return
 
