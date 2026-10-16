@@ -149,8 +149,8 @@ footer .logo { display: block; margin: 0 0 4px; font-size: 28px; }
 .btn-pill.checkin.done { background: var(--yellow); border-color: var(--yellow); color: var(--ink); }
 
 /* AI 助理 */
-.chat-fab { position: fixed; right: 20px; bottom: 20px; z-index: 2100; border: 0; border-radius: 99px; background: var(--red); color: #fff; padding: 12px 20px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 18px rgba(229, 55, 43, .35); }
-.chat-panel { position: fixed; right: 20px; bottom: 80px; z-index: 2100; width: min(360px, calc(100% - 32px)); height: 480px; background: var(--bg); border-radius: 24px; box-shadow: 0 12px 40px rgba(27, 35, 80, .25); display: flex; flex-direction: column; overflow: hidden; }
+.chat-fab { --fab-size: 56px; position: fixed; right: 20px; bottom: 20px; z-index: 2100; width: var(--fab-size); height: var(--fab-size); padding: 0; border: 0; border-radius: 50%; background: linear-gradient(135deg, #5b84f5 0%, var(--blue) 52%, var(--blue-dark) 100%); color: #fff; cursor: pointer; box-shadow: 0 6px 18px rgba(36, 73, 194, .4), inset 0 1px 0 rgba(255, 255, 255, .25); }
+.chat-panel { position: fixed; right: 20px; bottom: 88px; z-index: 2100; width: min(360px, calc(100% - 32px)); height: 480px; background: var(--bg); border-radius: 24px; box-shadow: 0 12px 40px rgba(27, 35, 80, .25); display: flex; flex-direction: column; overflow: hidden; }
 .chat-panel header { padding: 14px 18px; background: var(--blue); color: #fff; font-family: var(--display); font-weight: 700; font-size: 18px; display: flex; justify-content: space-between; align-items: center; }
 .chat-panel header small { font-family: "Noto Sans TC", sans-serif; font-weight: 500; font-size: 12px; opacity: .8; }
 .chat-log { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
@@ -202,8 +202,8 @@ footer .logo { display: block; margin: 0 0 4px; font-size: 28px; }
   .tabbar a span { width: 34px; height: 34px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-size: 15px; color: var(--blue); }
   footer { padding-bottom: calc(110px + var(--safe-b)); }
 
-  .chat-fab { right: 14px; bottom: calc(var(--tabbar-h) + 22px + var(--safe-b)); padding: 10px 16px; }
-  .chat-panel { left: 12px; right: 12px; width: auto; bottom: calc(var(--tabbar-h) + 74px + var(--safe-b)); height: min(440px, 60dvh); }
+  .chat-fab { --fab-size: 52px; right: 14px; bottom: calc(var(--tabbar-h) + 22px + var(--safe-b)); }
+  .chat-panel { left: 12px; right: 12px; width: auto; bottom: calc(var(--tabbar-h) + 84px + var(--safe-b)); height: min(440px, 60dvh); }
 
   /* 詳情改成底部抽屜，上方地圖仍看得到定位 */
   .detail { top: auto; left: 0; right: 0; width: 100%; max-height: 58dvh; border-radius: 24px 24px 0 0; transform: translateY(105%); z-index: 2200; padding-bottom: var(--safe-b); box-shadow: 0 -8px 30px rgba(27, 35, 80, .2); }
@@ -232,7 +232,7 @@ footer .logo { display: block; margin: 0 0 4px; font-size: 28px; }
 .stamp svg { font-size: 14px; }
 .pin-done svg { width: 8px; height: 8px; }
 .trophy { color: var(--red); }
-.chat-fab { display: inline-flex; align-items: center; gap: 8px; }
+.chat-fab { display: grid; place-items: center; }
 .btn-pill svg { margin-right: 4px; }
 .detail .close { display: grid; place-items: center; font-size: 18px; }
 
@@ -295,3 +295,55 @@ footer .logo { display: block; margin: 0 0 4px; font-size: 28px; }
 .chat-reset { border: 0; background: rgba(255, 255, 255, .18); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; font-size: 14px; flex: none; }
 .chat-reset:hover:not(:disabled) { background: rgba(255, 255, 255, .32); }
 .chat-reset:disabled { opacity: .4; cursor: default; }
+
+/* AI 助理開關動畫 */
+.chat-panel { transform-origin: calc(100% - 28px) calc(100% + 40px); }
+.chat-pop-enter-active { transition: opacity .2s ease-out, transform .32s cubic-bezier(.2, .9, .3, 1.15); }
+.chat-pop-leave-active { transition: opacity .15s ease-in, transform .18s ease-in; }
+.chat-pop-enter-from, .chat-pop-leave-to { opacity: 0; transform: translateY(14px) scale(.9); }
+
+/* 按鈕：圖示旋轉切換，按下有回饋，開啟時改為深色表示「關閉」 */
+.chat-fab { transition: background .2s, box-shadow .2s, transform .15s; }
+.chat-fab:hover { box-shadow: 0 8px 24px rgba(36, 73, 194, .55), inset 0 1px 0 rgba(255, 255, 255, .25); }
+.chat-fab:active { transform: scale(.95); }
+.chat-fab.open { background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%); }
+.fab-icon { display: grid; width: 28px; height: 24px; place-items: center; font-size: 22px; }
+.icon-swap-enter-active, .icon-swap-leave-active { transition: opacity .12s, transform .18s ease-out; }
+.icon-swap-enter-from { opacity: 0; transform: rotate(-90deg) scale(.6); }
+.icon-swap-leave-to { opacity: 0; transform: rotate(90deg) scale(.6); }
+
+/* 訊息與建議問題：滑入淡入 */
+.chat-log .msg { animation: msg-in .24s ease-out both; }
+.suggestions button { animation: msg-in .3s ease-out both; }
+.suggestions button:nth-child(2) { animation-delay: .06s; }
+.suggestions button:nth-child(3) { animation-delay: .12s; }
+@keyframes msg-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-pop-enter-active, .chat-pop-leave-active, .icon-swap-enter-active, .icon-swap-leave-active { transition: opacity .1s; }
+  .chat-pop-enter-from, .chat-pop-leave-to, .icon-swap-enter-from, .icon-swap-leave-to { transform: none; }
+  .chat-log .msg, .suggestions button { animation: none; }
+}
+
+/* AI 按鈕：系統藍實心圓＋白色機器人 */
+.chat-fab {
+  border: 0;
+  color: #fff;
+  background: linear-gradient(140deg, #4a74ee 0%, var(--blue) 55%, var(--blue-dark) 100%);
+  box-shadow: 0 6px 18px rgba(36, 73, 194, .38), 0 1px 3px rgba(27, 35, 80, .15);
+  transition: transform .2s cubic-bezier(.2, .9, .3, 1.2), box-shadow .2s;
+  animation: fab-glow 3.6s ease-in-out infinite;
+}
+.chat-fab:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(36, 73, 194, .48), 0 1px 3px rgba(27, 35, 80, .15); }
+.chat-fab:active { transform: scale(.94); }
+.chat-fab.open { animation: none; background: linear-gradient(140deg, var(--blue) 0%, var(--blue-dark) 100%); }
+.fab-icon { width: 30px; height: 26px; font-size: 22px; }
+.fab-ai { display: grid; place-items: center; }
+@keyframes fab-glow {
+  0%, 100% { box-shadow: 0 6px 18px rgba(36, 73, 194, .38), 0 1px 3px rgba(27, 35, 80, .15); }
+  50% { box-shadow: 0 6px 26px rgba(36, 73, 194, .55), 0 1px 3px rgba(27, 35, 80, .15); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chat-fab { animation: none; }
+  .chat-fab:hover { transform: none; }
+}

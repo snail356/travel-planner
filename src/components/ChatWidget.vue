@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, nextTick, ref } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faCommentDots, faLocationDot, faPaperPlane, faRotateRight, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faLocationDot, faPaperPlane, faRotateRight, faXmark } from '@fortawesome/free-solid-svg-icons'
+import AiBotIcon from './icons/AiBotIcon.vue'
 import type { ChatMessage, Stop } from '../../shared/types'
 import { streamChat } from '../services/api'
 import { useTrip } from '../composables/useTrip'
@@ -141,6 +142,8 @@ function openStop(stop: Stop) {
 </script>
 
 <template>
+  <!-- 開關動畫：從右下角的按鈕位置放大淡入 -->
+  <Transition name="chat-pop">
   <div v-if="open" class="chat-panel">
     <header>
       <span class="chat-title">
@@ -182,8 +185,22 @@ function openStop(stop: Stop) {
       <button :disabled="sending || !input.trim()" aria-label="送出"><FontAwesomeIcon :icon="faPaperPlane" /></button>
     </form>
   </div>
-  <button class="chat-fab" :aria-expanded="open" @click="open = !open">
-    <FontAwesomeIcon :icon="open ? faXmark : faCommentDots" />
-    {{ open ? '關閉' : '問 AI' }}
+  </Transition>
+  <button
+    class="chat-fab"
+    :class="{ open }"
+    :aria-expanded="open"
+    :aria-label="open ? '關閉 AI 行程助理' : '開啟 AI 行程助理'"
+    :title="open ? '關閉 AI 行程助理' : 'AI 行程助理'"
+    @click="open = !open"
+  >
+    <span class="fab-icon">
+      <Transition name="icon-swap" mode="out-in">
+        <span v-if="!open" key="ai" class="fab-ai">
+          <AiBotIcon :size="26" color="#fff" />
+        </span>
+        <FontAwesomeIcon v-else key="close" :icon="faXmark" />
+      </Transition>
+    </span>
   </button>
 </template>
