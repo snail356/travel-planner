@@ -359,3 +359,44 @@ footer .logo { display: block; margin: 0 0 4px; font-size: 28px; }
 .stops li.end-row .t { font-size: 14px; color: var(--muted); }
 .detail-note { background: var(--blue-soft); color: var(--blue); border-radius: 10px; padding: 8px 12px; font-size: 14px; font-weight: 700; }
 .day-theme { margin: -6px 0 14px; font-weight: 900; color: var(--ink); }
+
+/* 行前須知：重點卡片 */
+.guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.guide-card { display: flex; flex-direction: column; gap: 10px; text-align: left; font: inherit; color: inherit; background: var(--card); border: 2px solid transparent; border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); cursor: pointer; transition: transform .15s, border-color .15s; }
+.guide-card:hover { transform: translateY(-2px); }
+.guide-card:active { transform: scale(.98); }
+.guide-card.active { border-color: var(--blue); }
+.guide-head { display: flex; align-items: center; gap: 10px; }
+.guide-ico { width: 40px; height: 40px; flex: none; border-radius: 50%; background: var(--blue-soft); color: var(--blue); display: grid; place-items: center; font-size: 17px; }
+.guide-title { font-weight: 900; font-size: 16px; }
+.guide-points { margin: 0; padding-left: 18px; font-size: 14px; color: #4a5070; display: grid; gap: 4px; }
+.guide-more { margin-top: auto; align-self: flex-end; font-size: 13px; font-weight: 700; color: var(--blue); display: inline-flex; align-items: center; gap: 4px; }
+.guide-more svg { font-size: 11px; }
+
+/* 行前須知：抽屜中的完整說明 */
+.guide-detail { display: grid; gap: 10px; margin: 12px 0; }
+.guide-item { background: var(--card); border-radius: 14px; padding: 12px 14px; }
+.guide-item h3 { margin: 0 0 4px; font-size: 15px; font-weight: 900; color: var(--blue); }
+.guide-item p { margin: 0; font-size: 14px; }
+.guide-item ol { margin: 6px 0 0; padding-left: 20px; font-size: 14px; display: grid; gap: 4px; }
+.guide-disclaimer { font-size: 12px; color: var(--muted); }
+@media (max-width: 800px) { .guide-grid { grid-template-columns: 1fr; gap: 12px; } }
+
+/* 匯率計算機 */
+.guide-card.converter { cursor: default; }
+.guide-card.converter:hover, .guide-card.converter:active { transform: none; }
+.conv-fields { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 8px; }
+.conv-field { display: grid; gap: 4px; font-size: 12px; font-weight: 700; color: var(--muted); }
+.conv-field input, .conv-custom input { width: 100%; min-width: 0; font: inherit; font-family: var(--display); font-size: 20px; font-weight: 700; color: var(--ink); border: 2px solid var(--line); border-radius: 12px; padding: 8px 10px; background: var(--bg); outline: none; }
+.conv-field input:focus, .conv-custom input:focus { border-color: var(--blue); background: #fff; }
+.conv-swap { color: var(--blue); padding-bottom: 14px; }
+.conv-quick { display: flex; flex-wrap: wrap; gap: 6px; }
+.conv-quick button { border: 1.5px solid var(--blue); background: #fff; color: var(--blue); border-radius: 99px; padding: 3px 12px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.conv-quick button:hover { background: var(--blue); color: #fff; }
+.conv-rate { margin: 0; font-size: 12px; color: var(--muted); }
+.conv-custom { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13px; font-weight: 700; color: var(--muted); }
+.conv-custom input { width: 110px; font-size: 15px; padding: 5px 10px; }
+.conv-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: auto; }
+.conv-credit { font-size: 11px; color: var(--muted); }
+.conv-foot .guide-more { margin-top: 0; border: 0; background: none; font: inherit; font-size: 13px; font-weight: 700; color: var(--blue); cursor: pointer; padding: 0; }
+.conv-field input::-webkit-outer-spin-button, .conv-field input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }

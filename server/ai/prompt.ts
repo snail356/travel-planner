@@ -39,6 +39,13 @@ export function buildTripContext(trip: Trip): string {
     .map(c => `- ${c.label}：NT$${c.amount.toLocaleString()}${c.unit ? ` / ${c.unit}` : ''}`)
     .join('\n')
 
+  const guides = trip.guides
+    .map(g => [
+      `【${g.title}】`,
+      ...g.items.map(i => `- ${i.label}：${i.text}${i.points?.length ? ` ${i.points.join(' ')}` : ''}`),
+    ].join('\n'))
+    .join('\n')
+
   return `<trip>
 行程：${trip.title}（${trip.days} 天 ${trip.nights} 夜）
 說明：${trip.subtitle}
@@ -55,6 +62,9 @@ ${transports}
 
 主要花費：
 ${costs}
+
+行前須知：
+${guides}
 </trip>`
 }
 

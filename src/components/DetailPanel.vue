@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faCircleCheck, faLocationDot, faStamp, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faArrowUpRightFromSquare, faCircleCheck, faLocationDot, faStamp, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { dayStyle, placeLabels, useTrip } from '../composables/useTrip'
 import { useCurrentCheckins } from '../composables/useCheckins'
-import { placeIcons } from '../icons'
+import { guideIcons, placeIcons } from '../icons'
 import StopPhoto from './StopPhoto.vue'
 
-const { selectedStop: s, selectedPlace: p, closeDetail, slotOf } = useTrip()
+const { selectedStop: s, selectedPlace: p, selectedGuide: g, closeDetail, slotOf } = useTrip()
 const { isChecked, toggle } = useCurrentCheckins()
 
 // 點面板以外的地方自動收回
 const panel = ref<HTMLElement>()
-const current = () => s.value ?? p.value
+const current = () => s.value ?? p.value ?? g.value
 let downX = 0
 let downY = 0
 let selectionAtDown: unknown = null
@@ -55,7 +55,7 @@ const mapsUrl = (name: string) =>
 </script>
 
 <template>
-  <aside ref="panel" class="detail" :class="{ open: s || p }" aria-label="站點詳情">
+  <aside ref="panel" class="detail" :class="{ open: s || p || g }" :aria-label="g ? '行前須知' : '站點詳情'">
     <span class="sheet-handle" aria-hidden="true"></span>
     <!-- 高度 0 的置頂層：關閉鈕疊在照片上，捲動抽屜時也固定在右上角 -->
     <div class="detail-top">
@@ -108,6 +108,27 @@ const mapsUrl = (name: string) =>
         </div>
         <a class="btn-pill" :href="mapsUrl(p.name)" target="_blank" rel="noopener">
           <FontAwesomeIcon :icon="faLocationDot" /> Google 地圖
+        </a>
+      </div>
+    </template>
+    <!-- 行前須知完整說明 -->
+    <template v-else-if="g">
+      <div class="img placeholder place-hero"><FontAwesomeIcon :icon="guideIcons[g.icon]" /></div>
+      <div class="body">
+        <p><span class="tag tag-ink">行前須知</span></p>
+        <h2>{{ g.title }}</h2>
+        <div class="guide-detail">
+          <section v-for="item in g.items" :key="item.label" class="guide-item">
+            <h3>{{ item.label }}</h3>
+            <p>{{ item.text }}</p>
+            <ol v-if="item.points?.length">
+              <li v-for="pt in item.points" :key="pt">{{ pt }}</li>
+            </ol>
+          </section>
+        </div>
+        <p class="guide-disclaimer">規定與票價可能變動，出發前請以官方公告為準。</p>
+        <a v-if="g.sourceUrl" class="btn-pill ghost" :href="g.sourceUrl" target="_blank" rel="noopener">
+          <FontAwesomeIcon :icon="faArrowUpRightFromSquare" /> {{ g.id === 'exchange' ? '匯率資料來源' : '官方說明' }}
         </a>
       </div>
     </template>

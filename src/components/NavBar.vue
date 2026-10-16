@@ -2,8 +2,8 @@
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { navItems } from '../navItems'
 
-const { route, food, spots, stay, transport, cost } = navItems
-const topLinks = [route, food, spots, stay, transport, cost]
+const { route, food, spots, stay, transport, guide, cost } = navItems
+const topLinks = [route, food, spots, stay, transport, guide, cost]
 const tabs = [route, food, spots, stay, cost]
 </script>
 

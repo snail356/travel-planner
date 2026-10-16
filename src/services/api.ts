@@ -1,9 +1,13 @@
-import type { ChatRequest, ChatStreamEvent, Trip } from '../../shared/types'
+import type { ChatRequest, ChatStreamEvent, ExchangeRate, Trip } from '../../shared/types'
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, init)
   if (!res.ok) throw new Error(`${init?.method ?? 'GET'} ${url} 失敗（${res.status}）`)
   return res.json() as Promise<T>
+}
+
+export function fetchRate(): Promise<ExchangeRate> {
+  return request<ExchangeRate>('/api/rate')
 }
 
 export function fetchTrip(id?: string): Promise<Trip> {

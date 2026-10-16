@@ -7,6 +7,7 @@ import ItinerarySection from './components/ItinerarySection.vue'
 import StopCardGrid from './components/StopCardGrid.vue'
 import HotelSection from './components/HotelSection.vue'
 import TransportSection from './components/TransportSection.vue'
+import GuideSection from './components/GuideSection.vue'
 import CostSection from './components/CostSection.vue'
 import DetailPanel from './components/DetailPanel.vue'
 import ChatWidget from './components/ChatWidget.vue'
@@ -38,6 +39,7 @@ onMounted(() => load())
     />
     <HotelSection :hotel="trip.hotel" />
     <TransportSection :transports="trip.transports" />
+    <GuideSection :guides="trip.guides" />
     <CostSection :trip="trip" />
     <footer><span class="logo">Hong<em>Kong</em></span>{{ trip.title }}・行程規劃草稿</footer>
     <DetailPanel />

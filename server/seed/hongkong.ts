@@ -1,4 +1,5 @@
 import type { DayNo, DayPlan, Stop, Trip } from '../../shared/types.js'
+import { hongkongGuides } from './hongkong-guides.js'
 import { hongkongPhotos } from './hongkong-photos.js'
 
 // 動線（依地理區域與最佳順序排列）：站點的天數與造訪順序以這裡為準，站號維持原始編號
@@ -102,6 +103,7 @@ export const hongkongTrip: Trip = {
     { label: '住宿：OTTO HOTEL 兩晚', amount: 9812 },
   ],
   dayPlans,
+  guides: hongkongGuides,
   places: [
     {
       id: 'hotel-otto',

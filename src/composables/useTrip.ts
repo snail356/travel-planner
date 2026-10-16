@@ -1,5 +1,5 @@
 import { computed, ref } from 'vue'
-import type { DayNo, Place, PlaceKind, Stop, Trip } from '../../shared/types'
+import type { DayNo, Guide, Place, PlaceKind, Stop, Trip } from '../../shared/types'
 import { fetchTrip } from '../services/api'
 
 /** 行程地圖的篩選：0 = 全部、1~3 = 某天、或某一類固定地點 */
@@ -11,6 +11,8 @@ const loading = ref(false)
 const error = ref<string | null>(null)
 const selectedStop = ref<Stop | null>(null)
 const selectedPlace = ref<Place | null>(null)
+/** 抽屜中開啟的行前須知 */
+const selectedGuide = ref<Guide | null>(null)
 const activeFilter = ref<MapFilter>(0)
 /** AI 助理要求在地圖上標示的站點 */
 const highlightedStopIds = ref<number[]>([])
@@ -76,7 +78,7 @@ export function useTrip() {
   }
 
   return {
-    trip, loading, error, selectedStop, selectedPlace, activeFilter, highlightedStopIds,
+    trip, loading, error, selectedStop, selectedPlace, selectedGuide, activeFilter, highlightedStopIds,
     orderedStops, visibleStops, visiblePlaces, foodTotal, load,
     /** 站點所屬的時段，例如「上午／午餐」 */
     slotOf: (id: number) => planInfo.value.get(id)?.slot,
@@ -90,17 +92,26 @@ export function useTrip() {
     clearHighlights() {
       highlightedStopIds.value = []
     },
+    // 抽屜一次只顯示一種內容：站點、固定地點或行前須知
     selectStop(s: Stop) {
       selectedPlace.value = null
+      selectedGuide.value = null
       selectedStop.value = s
     },
     selectPlace(p: Place) {
       selectedStop.value = null
+      selectedGuide.value = null
       selectedPlace.value = p
+    },
+    selectGuide(g: Guide) {
+      selectedStop.value = null
+      selectedPlace.value = null
+      selectedGuide.value = g
     },
     closeDetail() {
       selectedStop.value = null
       selectedPlace.value = null
+      selectedGuide.value = null
     },
   }
 }

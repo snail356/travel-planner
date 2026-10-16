@@ -1,6 +1,7 @@
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import {
   faBed,
+  faCircleInfo,
   faCameraRetro,
   faPlane,
   faRoute,
@@ -16,11 +17,12 @@ export interface NavItem {
 }
 
 // 頂部導覽列與手機底部 tab bar 共用
-export const navItems: Record<'route' | 'food' | 'spots' | 'stay' | 'transport' | 'cost', NavItem> = {
+export const navItems: Record<'route' | 'food' | 'spots' | 'stay' | 'transport' | 'guide' | 'cost', NavItem> = {
   route: { href: '#itinerary', label: '行程', en: 'ROUTE', icon: faRoute },
   food: { href: '#food', label: '美食', en: 'FOOD', icon: faUtensils },
   spots: { href: '#spots', label: '景點', en: 'SPOTS', icon: faCameraRetro },
   stay: { href: '#hotel', label: '住宿', en: 'STAY', icon: faBed },
   transport: { href: '#transport', label: '交通', en: 'GO', icon: faPlane },
+  guide: { href: '#guide', label: '須知', en: 'GUIDE', icon: faCircleInfo },
   cost: { href: '#cost', label: '花費', en: 'BUDGET', icon: faWallet },
 }

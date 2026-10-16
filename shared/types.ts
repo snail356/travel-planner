@@ -102,6 +102,45 @@ export interface Trip {
   places: Place[]
   /** 動線：站點的天數與順序以這裡為準 */
   dayPlans: DayPlan[]
+  /** 行前須知（簽證、票券、交通等） */
+  guides: Guide[]
+}
+
+// ---- 行前須知 ----
+
+/** 行前須知的圖示代碼，前端對應到 Font Awesome 圖示（見 src/icons.ts） */
+export type GuideIcon = 'passport' | 'ticket' | 'transit' | 'currency'
+
+/** GET /api/rate：港幣對新台幣參考匯率 */
+export interface ExchangeRate {
+  /** 1 HKD 可換多少 TWD */
+  rate: number
+  /** 匯率資料的更新時間（ISO 字串） */
+  updatedAt: string
+  /** 取得線上匯率失敗、改用內建備用值時為 true */
+  fallback: boolean
+  source: string
+  sourceUrl: string
+}
+
+export interface GuideItem {
+  /** 小標，例如「台胞證」 */
+  label: string
+  text: string
+  /** 條列細項（例如預約規定的各點） */
+  points?: string[]
+}
+
+export interface Guide {
+  id: string
+  icon: GuideIcon
+  title: string
+  /** 卡片上顯示的重點（2～3 點） */
+  highlights: string[]
+  /** 抽屜中的完整說明 */
+  items: GuideItem[]
+  /** 官方資訊來源 */
+  sourceUrl?: string
 }
 
 // ---- AI 助理 ----
